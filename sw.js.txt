@@ -1,0 +1,221 @@
+// ═══════════════════════════════════════════════════════════════
+// Tended Service Worker — v5
+// Background medication reminders + offline caching
+// ═══════════════════════════════════════════════════════════════
+
+const CACHE     = 'tended-v5';
+const SCHED_KEY = 'tended-schedule';
+const URLS      = ['/', '/app.html', '/caregiver.html'];
+
+// ── Install ───────────────────────────────────────────────────
+self.addEventListener('install', e => {
+  e.waitUntil(
+    caches.open(CACHE)
+      .then(c => c.addAll(URLS).catch(() => {}))
+      .then(() => self.skipWaiting())
+  );
+});
+
+// ── Activate ──────────────────────────────────────────────────
+self.addEventListener('activate', e => {
+  e.waitUntil(
+    caches.keys()
+      .then(keys => Promise.all(
+        keys.filter(k => k !== CACHE).map(k => caches.delete(k))
+      ))
+      .then(() => self.clients.claim())
+      .then(() => { scheduleNextCheck(); })
+  );
+});
+
+// ── Fetch: stale-while-revalidate ─────────────────────────────
+self.addEventListener('fetch', e => {
+  if (e.request.method !== 'GET') return;
+  if (!e.request.url.startsWith('http')) return;
+  e.respondWith(
+    caches.match(e.request).then(cached => {
+      const fresh = fetch(e.request).then(res => {
+        if (res && res.ok)
+          caches.open(CACHE).then(c => c.put(e.request, res.clone()));
+        return res;
+      }).catch(() => cached || new Response('Offline', { status: 503 }));
+      return cached || fresh;
+    })
+  );
+});
+
+// ── Messages from the app ─────────────────────────────────────
+self.addEventListener('message', e => {
+  switch (e.data?.type) {
+    case 'UPDATE_SCHEDULE': storeSched(e.data.schedule);          break;
+    case 'MED_TAKEN':       markTaken(e.data.medId, e.data.date); break;
+    case 'PING':            e.source?.postMessage({ type: 'PONG' }); break;
+  }
+});
+
+// ── Notification click ────────────────────────────────────────
+self.addEventListener('notificationclick', e => {
+  e.notification.close();
+  const url    = e.notification.data?.url || '/app.html';
+  const action = e.notification.data?.action;
+  e.waitUntil(
+    self.clients.matchAll({ type: 'window', includeUncontrolled: true }).then(clients => {
+      for (const c of clients) {
+        if (c.url.includes('app.html') || c.url.includes('tended')) {
+          c.focus();
+          if (action === 'taken') c.postMessage({
+            type: 'MED_TAKEN',
+            medId: e.notification.data?.medId,
+            date:  e.notification.data?.date,
+            name:  e.notification.data?.name
+          });
+          return;
+        }
+      }
+      return self.clients.openWindow(url);
+    })
+  );
+});
+
+// ── Background reminder loop ──────────────────────────────────
+function scheduleNextCheck() {
+  setTimeout(async () => { await checkReminders(); scheduleNextCheck(); }, 60000);
+}
+
+async function checkReminders() {
+  try {
+    const sched = await getSched();
+    if (!sched?.meds?.length) return;
+    const prefs   = sched.prefs || {};
+    const taken   = sched.taken || {};
+    const now     = new Date();
+    const hhmm    = pad(now.getHours()) + ':' + pad(now.getMinutes());
+    const today   = now.toDateString();
+    const todayISO = now.toISOString().split('T')[0];
+    const nowMs   = now.getHours() * 3600000 + now.getMinutes() * 60000;
+    let changed   = false;
+
+    // Medication reminders
+    if (prefs.meds !== false) {
+      for (const med of sched.meds) {
+        if (!med.time) continue;
+        const schedMs = parseTime12(med.time);
+        if (schedMs === null) continue;
+        const schedHHMM = pad(Math.floor(schedMs/3600000)) + ':' + pad(Math.floor((schedMs%3600000)/60000));
+        const takenKey = `${med.id}_${today}`;
+        const remKey   = `${med.id}_${today}_sw_rem`;
+        const fupKey   = `${med.id}_${today}_sw_fup`;
+        const isTaken  = !!taken[takenKey];
+        const reminded = !!taken[remKey];
+        const followed = !!taken[fupKey];
+        if (schedHHMM === hhmm && !isTaken && !reminded) {
+          await showNotif(`💊 Time for ${med.name}`,
+            med.dose ? med.dose + ' — tap to open Tended' : 'Tap to open Tended',
+            { tag: `med-${med.id}-${today}`, medId: med.id, date: today, name: med.name });
+          taken[remKey] = true; changed = true;
+        }
+        if (prefs.followup !== false) {
+          const minsAgo = Math.floor((nowMs - schedMs) / 60000);
+          if (minsAgo === 30 && !isTaken && reminded && !followed) {
+            await showNotif(`⚠️ ${med.name} not yet taken`,
+              "Scheduled 30 minutes ago — don't forget!",
+              { tag: `fup-${med.id}-${today}`, medId: med.id, date: today, name: med.name });
+            taken[fupKey] = true; changed = true;
+          }
+        }
+      }
+    }
+
+    // Refill alerts at 9:00 AM
+    if (prefs.refill !== false && hhmm === '09:00') {
+      for (const med of sched.meds) {
+        if (!med.refill) continue;
+        const days = Math.ceil((new Date(med.refill+'T00:00:00') - now) / 86400000);
+        const alertKey = `${med.id}_refill_${todayISO}`;
+        if ([7,3,1].includes(days) && !taken[alertKey]) {
+          await showNotif(`📦 Refill: ${med.name}`,
+            days === 1 ? 'Last day — call the pharmacy!' : `${days} days left — time to refill`,
+            { tag: `refill-${med.id}-${todayISO}` });
+          taken[alertKey] = true; changed = true;
+        }
+      }
+    }
+
+    // Appointment reminders at 8:00 AM
+    if (prefs.appts !== false && hhmm === '08:00' && sched.appts?.length) {
+      const tm = new Date(now); tm.setDate(tm.getDate()+1);
+      const tomorrowISO = tm.toISOString().split('T')[0];
+      for (const a of sched.appts) {
+        if (a.date === tomorrowISO) {
+          const key = `appt_tm_${a.id}_${todayISO}`;
+          if (!taken[key]) {
+            await showNotif(`📅 Appointment tomorrow: ${a.name}`,
+              [a.time,a.loc].filter(Boolean).join(' · ') || 'Check Tended for details',
+              { tag: `appt-tm-${a.id}` });
+            taken[key] = true; changed = true;
+          }
+        }
+        if (a.date === todayISO) {
+          const key = `appt_td_${a.id}_${todayISO}`;
+          if (!taken[key]) {
+            await showNotif(`📅 TODAY: ${a.name}`,
+              [a.time,a.loc].filter(Boolean).join(' · ') || 'Good luck!',
+              { tag: `appt-td-${a.id}` });
+            taken[key] = true; changed = true;
+          }
+        }
+      }
+    }
+
+    if (changed) await storeSched({ ...sched, taken });
+  } catch(e) {}
+}
+
+// ── Helpers ───────────────────────────────────────────────────
+function pad(n){ return String(n).padStart(2,'0'); }
+
+function parseTime12(str){
+  const m = str.match(/(\d+):(\d+)\s*(AM|PM)/i);
+  if(!m) return null;
+  let h=parseInt(m[1]), mn=parseInt(m[2]);
+  if(m[3].toUpperCase()==='PM' && h!==12) h+=12;
+  if(m[3].toUpperCase()==='AM' && h===12)  h=0;
+  return h*3600000 + mn*60000;
+}
+
+async function showNotif(title, body, data={}) {
+  if(self.Notification?.permission !== 'granted') return;
+  await self.registration.showNotification(title, {
+    body, tag: data.tag||'tended', data: { url:'/app.html', ...data },
+    requireInteraction: false, vibrate: [200,100,200],
+    icon: 'data:image/svg+xml,'+encodeURIComponent(
+      '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 192 192">'+
+      '<rect width="192" height="192" rx="40" fill="#0F766E"/>'+
+      '<text x="96" y="130" font-size="110" text-anchor="middle">&#127968;</text>'+
+      '</svg>')
+  });
+}
+
+async function storeSched(sched){
+  try{
+    const c = await caches.open(CACHE);
+    await c.put(SCHED_KEY, new Response(JSON.stringify(sched),
+      { headers:{'Content-Type':'application/json'} }));
+  }catch(e){}
+}
+
+async function getSched(){
+  try{
+    const c = await caches.open(CACHE);
+    const r = await c.match(SCHED_KEY);
+    return r ? r.json() : null;
+  }catch(e){ return null; }
+}
+
+async function markTaken(medId, date){
+  const s = await getSched();
+  if(!s) return;
+  s.taken = s.taken||{};
+  s.taken[`${medId}_${date}`] = true;
+  await storeSched(s);
+}
