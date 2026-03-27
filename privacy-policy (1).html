@@ -1,0 +1,363 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Privacy Policy — Tended</title>
+  <link href="https://fonts.googleapis.com/css2?family=Lora:wght@400;600;700&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --teal:     #0F766E;
+      --teal-mid: #14B8A6;
+      --teal-pale:#CCFBF1;
+      --slate:    #1E293B;
+      --slate-mid:#475569;
+      --slate-lt: #94A3B8;
+      --cream:    #FAF7F2;
+      --white:    #FEFCF8;
+      --border:   #E2D9CC;
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: 'DM Sans', sans-serif;
+      background: var(--cream);
+      color: var(--slate);
+      font-size: 17px;
+      line-height: 1.7;
+    }
+
+    /* ── Header ─────────────────────────────────────── */
+    header {
+      background: linear-gradient(135deg, #0F766E 0%, #1E293B 100%);
+      padding: 48px 24px 40px;
+      text-align: center;
+    }
+    .logo { font-size: 3rem; margin-bottom: 12px; }
+    .app-name {
+      font-family: 'Lora', serif;
+      font-size: 2rem;
+      font-weight: 700;
+      color: white;
+      margin-bottom: 6px;
+    }
+    .app-tagline {
+      font-size: .95rem;
+      color: rgba(255,255,255,.65);
+      margin-bottom: 20px;
+    }
+    .badge {
+      display: inline-block;
+      background: rgba(255,255,255,.15);
+      border: 1px solid rgba(255,255,255,.3);
+      border-radius: 20px;
+      padding: 5px 16px;
+      font-size: .82rem;
+      color: rgba(255,255,255,.85);
+      font-weight: 600;
+    }
+
+    /* ── Container ───────────────────────────────────── */
+    .container {
+      max-width: 720px;
+      margin: 0 auto;
+      padding: 40px 24px 60px;
+    }
+
+    /* ── Summary banner ──────────────────────────────── */
+    .summary-banner {
+      background: var(--teal-pale);
+      border: 2px solid var(--teal-mid);
+      border-radius: 16px;
+      padding: 22px 26px;
+      margin-bottom: 40px;
+    }
+    .summary-banner h2 {
+      font-family: 'Lora', serif;
+      font-size: 1.1rem;
+      color: var(--teal);
+      margin-bottom: 14px;
+    }
+    .summary-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 12px;
+    }
+    .summary-item {
+      display: flex;
+      align-items: flex-start;
+      gap: 10px;
+      font-size: .88rem;
+      color: var(--slate-mid);
+      line-height: 1.5;
+    }
+    .summary-item .icon { font-size: 1.1rem; flex-shrink: 0; margin-top: 1px; }
+    .summary-item strong { color: var(--slate); }
+
+    /* ── Sections ────────────────────────────────────── */
+    .section {
+      margin-bottom: 36px;
+      padding-bottom: 36px;
+      border-bottom: 1px solid var(--border);
+    }
+    .section:last-of-type { border-bottom: none; margin-bottom: 0; }
+
+    .section-num {
+      font-size: .72rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: .1em;
+      color: var(--teal);
+      margin-bottom: 6px;
+    }
+    h2 {
+      font-family: 'Lora', serif;
+      font-size: 1.25rem;
+      font-weight: 700;
+      color: var(--slate);
+      margin-bottom: 14px;
+    }
+    p { color: var(--slate-mid); margin-bottom: 12px; }
+    p:last-child { margin-bottom: 0; }
+
+    ul {
+      list-style: none;
+      margin: 10px 0 14px;
+    }
+    ul li {
+      display: flex;
+      align-items: flex-start;
+      gap: 10px;
+      font-size: .92rem;
+      color: var(--slate-mid);
+      margin-bottom: 8px;
+      line-height: 1.55;
+    }
+    ul li::before {
+      content: '✓';
+      color: var(--teal);
+      font-weight: 700;
+      flex-shrink: 0;
+      margin-top: 1px;
+    }
+
+    /* Highlight box */
+    .highlight {
+      background: var(--white);
+      border: 1.5px solid var(--border);
+      border-left: 4px solid var(--teal);
+      border-radius: 0 10px 10px 0;
+      padding: 14px 18px;
+      font-size: .9rem;
+      color: var(--slate-mid);
+      margin: 14px 0;
+      line-height: 1.6;
+    }
+
+    /* ── Contact card ────────────────────────────────── */
+    .contact-card {
+      background: var(--white);
+      border: 1.5px solid var(--border);
+      border-radius: 14px;
+      padding: 20px 24px;
+      margin-top: 14px;
+    }
+    .contact-card p { margin-bottom: 6px; font-size: .92rem; }
+    .contact-card a { color: var(--teal); text-decoration: none; font-weight: 600; }
+    .contact-card a:hover { text-decoration: underline; }
+
+    /* ── Footer ──────────────────────────────────────── */
+    footer {
+      background: var(--slate);
+      color: rgba(255,255,255,.5);
+      text-align: center;
+      padding: 28px 24px;
+      font-size: .82rem;
+      line-height: 1.8;
+    }
+    footer strong { color: rgba(255,255,255,.85); }
+
+    /* ── Meta info ───────────────────────────────────── */
+    .meta {
+      display: flex;
+      gap: 20px;
+      flex-wrap: wrap;
+      font-size: .82rem;
+      color: var(--slate-lt);
+      margin-bottom: 32px;
+      padding-bottom: 24px;
+      border-bottom: 1px solid var(--border);
+    }
+    .meta span::before { content: '• '; }
+    .meta span:first-child::before { content: ''; }
+
+    @media (max-width: 600px) {
+      .app-name { font-size: 1.6rem; }
+      .container { padding: 28px 18px 48px; }
+      h2 { font-size: 1.1rem; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Header -->
+  <header>
+    <div class="logo">🏡</div>
+    <div class="app-name">Tended</div>
+    <div class="app-tagline">Your Private Health Companion</div>
+    <div class="badge">Privacy Policy</div>
+  </header>
+
+  <div class="container">
+
+    <!-- Meta -->
+    <div class="meta">
+      <span>Effective date: March 25, 2026</span>
+      <span>Last updated: March 25, 2026</span>
+      <span>Version 1.0</span>
+    </div>
+
+    <!-- Plain-English Summary -->
+    <div class="summary-banner">
+      <h2>🔐 The Short Version</h2>
+      <div class="summary-grid">
+        <div class="summary-item"><span class="icon">📵</span><div><strong>No data collection.</strong> We don't collect, store, or transmit your health information.</div></div>
+        <div class="summary-item"><span class="icon">🖥️</span><div><strong>Stays on your device.</strong> Everything is stored locally in your browser's storage.</div></div>
+        <div class="summary-item"><span class="icon">🚫</span><div><strong>No accounts required.</strong> No sign-up, no email, no passwords on our end.</div></div>
+        <div class="summary-item"><span class="icon">📊</span><div><strong>No analytics.</strong> We don't track how you use the app.</div></div>
+        <div class="summary-item"><span class="icon">🤝</span><div><strong>No third parties.</strong> Your data is never sold or shared.</div></div>
+        <div class="summary-item"><span class="icon">🗑️</span><div><strong>You control everything.</strong> Delete your data any time from within the app.</div></div>
+      </div>
+    </div>
+
+    <!-- 1. Introduction -->
+    <div class="section">
+      <div class="section-num">Section 1</div>
+      <h2>Introduction</h2>
+      <p>Tended ("the app," "we," "our") is a personal health companion application designed to help individuals — particularly seniors — manage medications, appointments, health logs, and related personal health information.</p>
+      <p>This Privacy Policy explains how Tended handles your information. Because Tended is built as a local-first application, this policy is straightforward: <strong>we do not collect, transmit, or store your personal information on any server.</strong></p>
+      <p>By using Tended, you acknowledge that you have read and understood this policy.</p>
+    </div>
+
+    <!-- 2. Information We Do Not Collect -->
+    <div class="section">
+      <div class="section-num">Section 2</div>
+      <h2>Information We Do Not Collect</h2>
+      <p>Tended does not collect any of the following:</p>
+      <ul>
+        <li>Your name, date of birth, or contact information</li>
+        <li>Medication names, dosages, or schedules</li>
+        <li>Health metrics such as blood pressure, heart rate, or weight</li>
+        <li>Appointment details or medical provider information</li>
+        <li>Symptom logs, health notes, or insurance information</li>
+        <li>Device identifiers, IP addresses, or location data</li>
+        <li>Usage patterns, session data, or analytics of any kind</li>
+      </ul>
+      <div class="highlight">
+        All information you enter into Tended is stored exclusively on your device using your browser's local storage. This data never leaves your device and is never sent to any server operated by us or any third party.
+      </div>
+    </div>
+
+    <!-- 3. How Your Data is Stored -->
+    <div class="section">
+      <div class="section-num">Section 3</div>
+      <h2>How Your Data is Stored</h2>
+      <p>Tended uses your device's browser local storage to save your health information. This means:</p>
+      <ul>
+        <li>Data is stored directly on your phone or tablet</li>
+        <li>Data persists between app sessions so you don't lose your information</li>
+        <li>Data is not backed up to any cloud service unless you manually export it</li>
+        <li>Data is removed if you clear your browser data or uninstall the app</li>
+      </ul>
+      <p>You can export a full backup of your data at any time by going to <strong>Settings → Data &amp; Transfer → Export / Backup</strong>. This creates a file saved to your device that you control entirely.</p>
+      <p>You can permanently delete all stored data at any time from <strong>Settings → Data &amp; Transfer → Clear All Data</strong>.</p>
+    </div>
+
+    <!-- 4. Optional PIN and Biometric Lock -->
+    <div class="section">
+      <div class="section-num">Section 4</div>
+      <h2>Optional PIN and Biometric Lock</h2>
+      <p>Tended offers an optional PIN lock and biometric authentication (Face ID or fingerprint) to prevent others from accessing the app on a shared device. These security features work as follows:</p>
+      <ul>
+        <li>PINs are stored as a secure SHA-256 hash on your device — they are never transmitted</li>
+        <li>Biometric authentication uses your device's built-in WebAuthn system — Tended never accesses or stores biometric data directly</li>
+        <li>Neither the PIN nor biometric credentials are ever sent off your device</li>
+        <li>Both features are entirely optional — Tended works without any lock</li>
+      </ul>
+    </div>
+
+    <!-- 5. AI Features and Third-Party API -->
+    <div class="section">
+      <div class="section-num">Section 5</div>
+      <h2>AI Features and Third-Party API</h2>
+      <p>Tended includes optional AI-powered features including an AI Assistant, Drug Interaction Checker, and Medication Label Scanner. These features use the Anthropic Claude API.</p>
+      <p><strong>These features are entirely optional and only active when you provide your own Anthropic API key in Settings.</strong></p>
+      <p>When you use an AI feature:</p>
+      <ul>
+        <li>Only the specific information relevant to your query is sent to the Anthropic API (for example, your medication list when checking drug interactions)</li>
+        <li>This transmission occurs directly from your device to Anthropic's servers</li>
+        <li>Tended itself does not receive, log, or store this transmitted data</li>
+        <li>Your use of the Anthropic API is subject to <a href="https://www.anthropic.com/privacy" target="_blank" rel="noopener">Anthropic's Privacy Policy</a></li>
+      </ul>
+      <div class="highlight">
+        If you do not set an API key, no data is ever transmitted from the app. The AI features are disabled by default.
+      </div>
+    </div>
+
+    <!-- 6. No Advertising or Analytics -->
+    <div class="section">
+      <div class="section-num">Section 6</div>
+      <h2>No Advertising or Analytics</h2>
+      <p>Tended contains no advertising of any kind. We do not work with advertisers, ad networks, or data brokers.</p>
+      <p>Tended contains no analytics software. We do not use Google Analytics, Firebase, Mixpanel, or any other analytics platform. We have no visibility into how you use the app, how often you open it, or what features you use.</p>
+    </div>
+
+    <!-- 7. Children's Privacy -->
+    <div class="section">
+      <div class="section-num">Section 7</div>
+      <h2>Children's Privacy</h2>
+      <p>Tended is designed for adults managing their personal health information. The app is not directed at children under the age of 13. We do not knowingly collect information from children. If you are a parent or guardian and believe your child has used this app, please contact us and we will assist you in removing any locally stored data.</p>
+    </div>
+
+    <!-- 8. Your Rights and Controls -->
+    <div class="section">
+      <div class="section-num">Section 8</div>
+      <h2>Your Rights and Controls</h2>
+      <p>Because all data is stored on your device and we collect nothing, you have complete control at all times:</p>
+      <ul>
+        <li><strong>Access:</strong> All your data is visible within the app at all times</li>
+        <li><strong>Export:</strong> Export a full copy of your data from Settings → Data &amp; Transfer</li>
+        <li><strong>Delete:</strong> Clear all data instantly from Settings → Data &amp; Transfer → Clear All Data</li>
+        <li><strong>Correction:</strong> Edit any entry directly within the app</li>
+        <li><strong>Portability:</strong> Your exported backup file is a standard JSON format you can read and use independently</li>
+      </ul>
+    </div>
+
+    <!-- 9. Changes to This Policy -->
+    <div class="section">
+      <div class="section-num">Section 9</div>
+      <h2>Changes to This Policy</h2>
+      <p>If we make material changes to this Privacy Policy, we will update the "Last updated" date at the top of this page and note the change in the app's version release notes.</p>
+      <p>Because Tended collects no personal information, changes to this policy are unlikely to affect you in practice. Your data will always remain on your device and under your control.</p>
+    </div>
+
+    <!-- 10. Contact -->
+    <div class="section">
+      <div class="section-num">Section 10</div>
+      <h2>Contact Us</h2>
+      <p>If you have questions about this Privacy Policy or about Tended, please contact us:</p>
+      <div class="contact-card">
+        <p><strong>Tended Health Companion</strong></p>
+        <p>📧 Email: <a href="mailto:socalreoking@gmail.com">socalreoking@gmail.com</a></p>
+        <p>🌐 Website: <a href="https://tended-app.netlify.app" target="_blank" rel="noopener">tended-app.netlify.app</a></p>
+        <p style="margin-top:12px;font-size:.84rem;color:var(--slate-lt)">We aim to respond to all privacy inquiries within 5 business days.</p>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- Footer -->
+  <footer>
+    <div><strong>Tended Health Companion</strong></div>
+    <div>Version 1.0 · Effec
