@@ -1,0 +1,29 @@
+{
+  "name": "Tended: Senior Health Companion",
+  "short_name": "Tended",
+  "description": "Private health companion for seniors. Medications, vitals & appointments.",
+  "start_url": "https://flougher.github.io/tended/",
+  "scope": "https://flougher.github.io/tended/",
+  "id": "https://flougher.github.io/tended/",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#0F766E",
+  "theme_color": "#0F766E",
+  "icons": [
+    {
+      "src": "https://flougher.github.io/tended/tended.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "https://flougher.github.io/tended/tended.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
+    }
+  ],
+  "categories": ["health", "medical", "lifestyle"],
+  "lang": "en-US",
+  "dir": "ltr"
+}
