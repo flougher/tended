@@ -600,7 +600,7 @@ body.high-contrast .nav-item.active{outline:2px solid var(--teal)}
       Unlock the full app with a one-time purchase.
     </div>
     <div class="unlock-price">
-      <div class="unlock-price-amt">$2.99</div>
+      <div class="unlock-price-amt">$4.99</div>
       <div class="unlock-price-label">ONE-TIME · No subscription ever</div>
     </div>
     <div class="unlock-features">
@@ -612,7 +612,7 @@ body.high-contrast .nav-item.active{outline:2px solid var(--teal)}
     </div>
     <button onclick="purchaseUnlock()"
       style="width:100%;background:linear-gradient(135deg,#0F766E,#1E293B);color:white;border:none;border-radius:14px;padding:16px;font-size:1rem;font-weight:700;cursor:pointer;font-family:'DM Sans',sans-serif;margin-bottom:10px;transition:all .2s">
-      🔓 Unlock for $2.99
+      🔓 Unlock for $4.99
     </button>
     <button onclick="restorePurchase()"
       style="width:100%;background:none;border:1.5px solid var(--border);border-radius:14px;padding:12px;font-size:.88rem;font-weight:600;cursor:pointer;font-family:'DM Sans',sans-serif;color:var(--slate-mid);margin-bottom:10px">
@@ -1431,7 +1431,7 @@ body.high-contrast .nav-item.active{outline:2px solid var(--teal)}
       <div style="display:flex;align-items:center;gap:14px;flex-wrap:wrap">
         <div style="background:rgba(255,255,255,.15);border:1.5px solid rgba(255,255,255,.3);border-radius:10px;padding:8px 16px;text-align:center">
           <div style="font-size:.7rem;color:rgba(255,255,255,.6);font-weight:700">FREE TO TRY</div>
-          <div style="font-size:1.2rem;font-weight:800;color:white">$2.99</div>
+          <div style="font-size:1.2rem;font-weight:800;color:white">$4.99</div>
           <div style="font-size:.68rem;color:rgba(255,255,255,.6);font-weight:600">TO UNLOCK</div>
         </div>
         <a href="https://play.google.com/store/apps/details?id=app.tended.health" target="_blank" rel="noopener"
@@ -5121,7 +5121,7 @@ function purchaseUnlock(){
     window.open('https://play.google.com/store/apps/details?id=io.github.flougher.tended','_blank');
     // For testing — show a code entry option
     const code = prompt('If you have an unlock code enter it here, or visit Google Play to purchase:');
-    if(code && code.trim().toUpperCase() === 'TENDED299'){
+    if(code && code.trim().toUpperCase() === 'TENDED499'){
       activateUnlock();
     }
   }
@@ -5138,7 +5138,7 @@ function restorePurchase(){
   // On Google Play this checks purchase history
   // For web — prompt for code
   const code = prompt('Enter your unlock code (from your Google Play receipt):');
-  if(code && code.trim().toUpperCase() === 'TENDED299'){
+  if(code && code.trim().toUpperCase() === 'TENDED499'){
     activateUnlock();
   } else {
     toast('No purchase found. Please contact socalreoking@gmail.com for help.','var(--amber)');
@@ -5155,7 +5155,7 @@ function renderTrialBanner(){
     const banner = document.createElement('div');
     banner.id = 'trial-banner';
     banner.style.cssText = 'background:var(--amber-pale);border-bottom:1.5px solid #FCD34D;padding:8px 16px;text-align:center;font-size:.82rem;color:var(--amber);font-weight:600;display:flex;align-items:center;justify-content:center;gap:10px';
-    banner.innerHTML = `⏳ ${status.daysLeft} day${status.daysLeft!==1?'s':''} left in your free trial &nbsp;·&nbsp; <button onclick="showUnlockPrompt()" style="background:var(--amber);color:white;border:none;border-radius:6px;padding:3px 10px;font-size:.78rem;font-weight:700;cursor:pointer;font-family:inherit">Unlock $2.99</button>`;
+    banner.innerHTML = `⏳ ${status.daysLeft} day${status.daysLeft!==1?'s':''} left in your free trial &nbsp;·&nbsp; <button onclick="showUnlockPrompt()" style="background:var(--amber);color:white;border:none;border-radius:6px;padding:3px 10px;font-size:.78rem;font-weight:700;cursor:pointer;font-family:inherit">Unlock $4.99</button>`;
     const shell = document.querySelector('.shell');
     if(shell) shell.insertBefore(banner, shell.firstChild);
   }
