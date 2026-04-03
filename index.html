@@ -537,6 +537,7 @@ body.high-contrast .nav-item.active{outline:2px solid var(--teal)}
   }
 }
 
+
 </style>
 </head>
 <body>
@@ -791,6 +792,8 @@ body.high-contrast .nav-item.active{outline:2px solid var(--teal)}
     <button class="btn btn-primary" style="flex:2;justify-content:center" onclick="copyDailySummary()" id="ds-copy-btn">📋 Copy to Clipboard</button>
   </div>
 </div></div>
+
+
 
 <!-- ══ SCAN OVERLAY ════════════════════════════════════════ -->
 <div id="scan-overlay">
@@ -1339,6 +1342,8 @@ body.high-contrast .nav-item.active{outline:2px solid var(--teal)}
   <div class="page-header"><div><div class="page-title">📞 Contacts</div><div class="page-sub">Important people and services — always one tap away</div></div><button class="btn btn-primary no-caregiver" onclick="addContact()">+ Add Contact</button></div>
   <div id="contacts-area"></div>
 </div>
+
+
 
 <!-- PROFILES -->
 <div id="section-profiles" class="section">
@@ -2479,6 +2484,108 @@ function printQrCard(){
   }
 }
 
+
+/* ══ TENDED PRO ══════════════════════════════════════════ */
+.pro-header {
+  background:linear-gradient(135deg,#6D28D9,#4C1D95);
+  border-radius:16px;padding:20px 22px;margin-bottom:22px;
+  display:flex;align-items:center;gap:16px;
+}
+.pro-header-icon { font-size:2.2rem;flex-shrink:0; }
+.pro-header-title {
+  font-family:'Lora',serif;font-size:1.3rem;
+  font-weight:700;color:white;margin-bottom:3px;
+}
+.pro-header-sub { font-size:.82rem;color:rgba(255,255,255,.7); }
+.pro-badge-inline {
+  display:inline-flex;align-items:center;gap:4px;
+  background:linear-gradient(135deg,#6D28D9,#4C1D95);
+  color:white;font-size:.65rem;font-weight:700;
+  padding:2px 7px;border-radius:6px;letter-spacing:.04em;
+  text-transform:uppercase;vertical-align:middle;margin-left:6px;
+}
+/* Patient cards */
+.pro-patient-card {
+  background:var(--white);border:1.5px solid var(--border);
+  border-radius:14px;padding:16px 18px;
+  display:flex;align-items:center;gap:14px;
+  cursor:pointer;transition:all .18s;
+  box-shadow:var(--shadow-sm);margin-bottom:10px;
+}
+.pro-patient-card:hover {
+  border-color:#C4B5FD;
+  box-shadow:0 4px 16px rgba(109,40,217,.12);
+  transform:translateY(-1px);
+}
+.pro-patient-avatar {
+  width:52px;height:52px;border-radius:50%;
+  display:flex;align-items:center;justify-content:center;
+  font-size:1.3rem;font-weight:800;color:white;flex-shrink:0;
+}
+/* MAR table */
+.mar-table { border:1.5px solid var(--border);border-radius:12px;overflow:hidden;margin-bottom:14px; }
+.mar-row {
+  display:grid;
+  grid-template-columns:1fr 70px 90px 100px 50px;
+  gap:6px;align-items:center;
+  padding:10px 12px;
+  border-bottom:1px solid var(--border);
+  font-size:.85rem;
+}
+.mar-row:last-child { border-bottom:none; }
+.mar-row.mar-header {
+  background:var(--cream);font-size:.72rem;
+  font-weight:700;text-transform:uppercase;
+  letter-spacing:.06em;color:var(--slate-light);
+}
+.mar-status-btn {
+  padding:4px 8px;border-radius:6px;font-size:.72rem;
+  font-weight:700;border:1.5px solid;cursor:pointer;
+  font-family:'DM Sans',sans-serif;transition:all .15s;
+}
+.mar-status-btn.given  { background:var(--sage-pale);color:var(--sage);border-color:#86EFAC; }
+.mar-status-btn.refused{ background:var(--rose-pale);color:var(--rose);border-color:#FCA5A5; }
+.mar-status-btn.held   { background:var(--amber-pale);color:var(--amber);border-color:#FCD34D; }
+.mar-status-btn.pending{ background:var(--cream);color:var(--slate-light);border-color:var(--border); }
+/* Incident cards */
+.pro-incident-card {
+  background:var(--white);border:1.5px solid var(--border);
+  border-radius:12px;padding:14px 16px;margin-bottom:10px;
+}
+.pro-severity-badge {
+  display:inline-block;font-size:.72rem;font-weight:700;
+  padding:2px 9px;border-radius:8px;margin-left:6px;
+}
+.sev-critical { background:var(--rose-pale);color:var(--rose); }
+.sev-moderate { background:var(--amber-pale);color:var(--amber); }
+.sev-minor    { background:var(--sage-pale);color:var(--sage); }
+/* Handoff */
+.handoff-block {
+  background:var(--cream);border-radius:10px;
+  padding:12px 14px;margin-bottom:10px;
+}
+.handoff-block-title {
+  font-size:.75rem;font-weight:700;text-transform:uppercase;
+  letter-spacing:.08em;color:var(--slate-light);margin-bottom:6px;
+}
+/* Pro tabs */
+.pro-tabs {
+  display:flex;gap:4px;flex-wrap:wrap;
+  border-bottom:2px solid var(--border);
+  margin-bottom:20px;padding-bottom:0;
+}
+.pro-tab {
+  padding:9px 14px;font-size:.84rem;font-weight:600;
+  border:none;background:none;cursor:pointer;
+  color:var(--slate-light);border-bottom:3px solid transparent;
+  margin-bottom:-2px;font-family:'DM Sans',sans-serif;
+  transition:all .15s;border-radius:6px 6px 0 0;
+}
+.pro-tab:hover { color:var(--slate);background:var(--cream); }
+.pro-tab.active { color:#6D28D9;border-bottom-color:#6D28D9;background:#F5F3FF; }
+.pro-panel { display:none; }
+.pro-panel.active { display:block; }
+
 </style></head><body><h2>🆘 Tended Emergency Card</h2><div class="card">${container.innerHTML}<div class="info">${document.getElementById('qr-preview').innerHTML}</div></div><p style="font-size:11px;color:#94A3B8;margin-top:16px">Tended — ${new Date().toLocaleDateString()}</p>
 <!-- MOBILE MORE MENU -->
 <div id="mobile-menu" style="display:none;position:fixed;inset:0;z-index:3700;background:rgba(15,23,42,.5)" onclick="if(event.target===this)toggleMobileMenu()">
@@ -2848,6 +2955,108 @@ function printHealthSummary(){
     padding-bottom: env(safe-area-inset-bottom, 0px);
   }
 }
+
+
+/* ══ TENDED PRO ══════════════════════════════════════════ */
+.pro-header {
+  background:linear-gradient(135deg,#6D28D9,#4C1D95);
+  border-radius:16px;padding:20px 22px;margin-bottom:22px;
+  display:flex;align-items:center;gap:16px;
+}
+.pro-header-icon { font-size:2.2rem;flex-shrink:0; }
+.pro-header-title {
+  font-family:'Lora',serif;font-size:1.3rem;
+  font-weight:700;color:white;margin-bottom:3px;
+}
+.pro-header-sub { font-size:.82rem;color:rgba(255,255,255,.7); }
+.pro-badge-inline {
+  display:inline-flex;align-items:center;gap:4px;
+  background:linear-gradient(135deg,#6D28D9,#4C1D95);
+  color:white;font-size:.65rem;font-weight:700;
+  padding:2px 7px;border-radius:6px;letter-spacing:.04em;
+  text-transform:uppercase;vertical-align:middle;margin-left:6px;
+}
+/* Patient cards */
+.pro-patient-card {
+  background:var(--white);border:1.5px solid var(--border);
+  border-radius:14px;padding:16px 18px;
+  display:flex;align-items:center;gap:14px;
+  cursor:pointer;transition:all .18s;
+  box-shadow:var(--shadow-sm);margin-bottom:10px;
+}
+.pro-patient-card:hover {
+  border-color:#C4B5FD;
+  box-shadow:0 4px 16px rgba(109,40,217,.12);
+  transform:translateY(-1px);
+}
+.pro-patient-avatar {
+  width:52px;height:52px;border-radius:50%;
+  display:flex;align-items:center;justify-content:center;
+  font-size:1.3rem;font-weight:800;color:white;flex-shrink:0;
+}
+/* MAR table */
+.mar-table { border:1.5px solid var(--border);border-radius:12px;overflow:hidden;margin-bottom:14px; }
+.mar-row {
+  display:grid;
+  grid-template-columns:1fr 70px 90px 100px 50px;
+  gap:6px;align-items:center;
+  padding:10px 12px;
+  border-bottom:1px solid var(--border);
+  font-size:.85rem;
+}
+.mar-row:last-child { border-bottom:none; }
+.mar-row.mar-header {
+  background:var(--cream);font-size:.72rem;
+  font-weight:700;text-transform:uppercase;
+  letter-spacing:.06em;color:var(--slate-light);
+}
+.mar-status-btn {
+  padding:4px 8px;border-radius:6px;font-size:.72rem;
+  font-weight:700;border:1.5px solid;cursor:pointer;
+  font-family:'DM Sans',sans-serif;transition:all .15s;
+}
+.mar-status-btn.given  { background:var(--sage-pale);color:var(--sage);border-color:#86EFAC; }
+.mar-status-btn.refused{ background:var(--rose-pale);color:var(--rose);border-color:#FCA5A5; }
+.mar-status-btn.held   { background:var(--amber-pale);color:var(--amber);border-color:#FCD34D; }
+.mar-status-btn.pending{ background:var(--cream);color:var(--slate-light);border-color:var(--border); }
+/* Incident cards */
+.pro-incident-card {
+  background:var(--white);border:1.5px solid var(--border);
+  border-radius:12px;padding:14px 16px;margin-bottom:10px;
+}
+.pro-severity-badge {
+  display:inline-block;font-size:.72rem;font-weight:700;
+  padding:2px 9px;border-radius:8px;margin-left:6px;
+}
+.sev-critical { background:var(--rose-pale);color:var(--rose); }
+.sev-moderate { background:var(--amber-pale);color:var(--amber); }
+.sev-minor    { background:var(--sage-pale);color:var(--sage); }
+/* Handoff */
+.handoff-block {
+  background:var(--cream);border-radius:10px;
+  padding:12px 14px;margin-bottom:10px;
+}
+.handoff-block-title {
+  font-size:.75rem;font-weight:700;text-transform:uppercase;
+  letter-spacing:.08em;color:var(--slate-light);margin-bottom:6px;
+}
+/* Pro tabs */
+.pro-tabs {
+  display:flex;gap:4px;flex-wrap:wrap;
+  border-bottom:2px solid var(--border);
+  margin-bottom:20px;padding-bottom:0;
+}
+.pro-tab {
+  padding:9px 14px;font-size:.84rem;font-weight:600;
+  border:none;background:none;cursor:pointer;
+  color:var(--slate-light);border-bottom:3px solid transparent;
+  margin-bottom:-2px;font-family:'DM Sans',sans-serif;
+  transition:all .15s;border-radius:6px 6px 0 0;
+}
+.pro-tab:hover { color:var(--slate);background:var(--cream); }
+.pro-tab.active { color:#6D28D9;border-bottom-color:#6D28D9;background:#F5F3FF; }
+.pro-panel { display:none; }
+.pro-panel.active { display:block; }
 
 </style></head><body>
   <h1>🏡 Tended — Health Summary</h1><p style="color:#94A3B8;font-size:12px">Generated ${today}</p>
@@ -3994,6 +4203,108 @@ function printDailyReport(){
   }
 }
 
+
+/* ══ TENDED PRO ══════════════════════════════════════════ */
+.pro-header {
+  background:linear-gradient(135deg,#6D28D9,#4C1D95);
+  border-radius:16px;padding:20px 22px;margin-bottom:22px;
+  display:flex;align-items:center;gap:16px;
+}
+.pro-header-icon { font-size:2.2rem;flex-shrink:0; }
+.pro-header-title {
+  font-family:'Lora',serif;font-size:1.3rem;
+  font-weight:700;color:white;margin-bottom:3px;
+}
+.pro-header-sub { font-size:.82rem;color:rgba(255,255,255,.7); }
+.pro-badge-inline {
+  display:inline-flex;align-items:center;gap:4px;
+  background:linear-gradient(135deg,#6D28D9,#4C1D95);
+  color:white;font-size:.65rem;font-weight:700;
+  padding:2px 7px;border-radius:6px;letter-spacing:.04em;
+  text-transform:uppercase;vertical-align:middle;margin-left:6px;
+}
+/* Patient cards */
+.pro-patient-card {
+  background:var(--white);border:1.5px solid var(--border);
+  border-radius:14px;padding:16px 18px;
+  display:flex;align-items:center;gap:14px;
+  cursor:pointer;transition:all .18s;
+  box-shadow:var(--shadow-sm);margin-bottom:10px;
+}
+.pro-patient-card:hover {
+  border-color:#C4B5FD;
+  box-shadow:0 4px 16px rgba(109,40,217,.12);
+  transform:translateY(-1px);
+}
+.pro-patient-avatar {
+  width:52px;height:52px;border-radius:50%;
+  display:flex;align-items:center;justify-content:center;
+  font-size:1.3rem;font-weight:800;color:white;flex-shrink:0;
+}
+/* MAR table */
+.mar-table { border:1.5px solid var(--border);border-radius:12px;overflow:hidden;margin-bottom:14px; }
+.mar-row {
+  display:grid;
+  grid-template-columns:1fr 70px 90px 100px 50px;
+  gap:6px;align-items:center;
+  padding:10px 12px;
+  border-bottom:1px solid var(--border);
+  font-size:.85rem;
+}
+.mar-row:last-child { border-bottom:none; }
+.mar-row.mar-header {
+  background:var(--cream);font-size:.72rem;
+  font-weight:700;text-transform:uppercase;
+  letter-spacing:.06em;color:var(--slate-light);
+}
+.mar-status-btn {
+  padding:4px 8px;border-radius:6px;font-size:.72rem;
+  font-weight:700;border:1.5px solid;cursor:pointer;
+  font-family:'DM Sans',sans-serif;transition:all .15s;
+}
+.mar-status-btn.given  { background:var(--sage-pale);color:var(--sage);border-color:#86EFAC; }
+.mar-status-btn.refused{ background:var(--rose-pale);color:var(--rose);border-color:#FCA5A5; }
+.mar-status-btn.held   { background:var(--amber-pale);color:var(--amber);border-color:#FCD34D; }
+.mar-status-btn.pending{ background:var(--cream);color:var(--slate-light);border-color:var(--border); }
+/* Incident cards */
+.pro-incident-card {
+  background:var(--white);border:1.5px solid var(--border);
+  border-radius:12px;padding:14px 16px;margin-bottom:10px;
+}
+.pro-severity-badge {
+  display:inline-block;font-size:.72rem;font-weight:700;
+  padding:2px 9px;border-radius:8px;margin-left:6px;
+}
+.sev-critical { background:var(--rose-pale);color:var(--rose); }
+.sev-moderate { background:var(--amber-pale);color:var(--amber); }
+.sev-minor    { background:var(--sage-pale);color:var(--sage); }
+/* Handoff */
+.handoff-block {
+  background:var(--cream);border-radius:10px;
+  padding:12px 14px;margin-bottom:10px;
+}
+.handoff-block-title {
+  font-size:.75rem;font-weight:700;text-transform:uppercase;
+  letter-spacing:.08em;color:var(--slate-light);margin-bottom:6px;
+}
+/* Pro tabs */
+.pro-tabs {
+  display:flex;gap:4px;flex-wrap:wrap;
+  border-bottom:2px solid var(--border);
+  margin-bottom:20px;padding-bottom:0;
+}
+.pro-tab {
+  padding:9px 14px;font-size:.84rem;font-weight:600;
+  border:none;background:none;cursor:pointer;
+  color:var(--slate-light);border-bottom:3px solid transparent;
+  margin-bottom:-2px;font-family:'DM Sans',sans-serif;
+  transition:all .15s;border-radius:6px 6px 0 0;
+}
+.pro-tab:hover { color:var(--slate);background:var(--cream); }
+.pro-tab.active { color:#6D28D9;border-bottom-color:#6D28D9;background:#F5F3FF; }
+.pro-panel { display:none; }
+.pro-panel.active { display:block; }
+
 </style></head><body>
     <div class="header">
       <div class="title">💊 Daily Medication Schedule</div>
@@ -4854,6 +5165,108 @@ function printDoctorSummary(){
   }
 }
 
+
+/* ══ TENDED PRO ══════════════════════════════════════════ */
+.pro-header {
+  background:linear-gradient(135deg,#6D28D9,#4C1D95);
+  border-radius:16px;padding:20px 22px;margin-bottom:22px;
+  display:flex;align-items:center;gap:16px;
+}
+.pro-header-icon { font-size:2.2rem;flex-shrink:0; }
+.pro-header-title {
+  font-family:'Lora',serif;font-size:1.3rem;
+  font-weight:700;color:white;margin-bottom:3px;
+}
+.pro-header-sub { font-size:.82rem;color:rgba(255,255,255,.7); }
+.pro-badge-inline {
+  display:inline-flex;align-items:center;gap:4px;
+  background:linear-gradient(135deg,#6D28D9,#4C1D95);
+  color:white;font-size:.65rem;font-weight:700;
+  padding:2px 7px;border-radius:6px;letter-spacing:.04em;
+  text-transform:uppercase;vertical-align:middle;margin-left:6px;
+}
+/* Patient cards */
+.pro-patient-card {
+  background:var(--white);border:1.5px solid var(--border);
+  border-radius:14px;padding:16px 18px;
+  display:flex;align-items:center;gap:14px;
+  cursor:pointer;transition:all .18s;
+  box-shadow:var(--shadow-sm);margin-bottom:10px;
+}
+.pro-patient-card:hover {
+  border-color:#C4B5FD;
+  box-shadow:0 4px 16px rgba(109,40,217,.12);
+  transform:translateY(-1px);
+}
+.pro-patient-avatar {
+  width:52px;height:52px;border-radius:50%;
+  display:flex;align-items:center;justify-content:center;
+  font-size:1.3rem;font-weight:800;color:white;flex-shrink:0;
+}
+/* MAR table */
+.mar-table { border:1.5px solid var(--border);border-radius:12px;overflow:hidden;margin-bottom:14px; }
+.mar-row {
+  display:grid;
+  grid-template-columns:1fr 70px 90px 100px 50px;
+  gap:6px;align-items:center;
+  padding:10px 12px;
+  border-bottom:1px solid var(--border);
+  font-size:.85rem;
+}
+.mar-row:last-child { border-bottom:none; }
+.mar-row.mar-header {
+  background:var(--cream);font-size:.72rem;
+  font-weight:700;text-transform:uppercase;
+  letter-spacing:.06em;color:var(--slate-light);
+}
+.mar-status-btn {
+  padding:4px 8px;border-radius:6px;font-size:.72rem;
+  font-weight:700;border:1.5px solid;cursor:pointer;
+  font-family:'DM Sans',sans-serif;transition:all .15s;
+}
+.mar-status-btn.given  { background:var(--sage-pale);color:var(--sage);border-color:#86EFAC; }
+.mar-status-btn.refused{ background:var(--rose-pale);color:var(--rose);border-color:#FCA5A5; }
+.mar-status-btn.held   { background:var(--amber-pale);color:var(--amber);border-color:#FCD34D; }
+.mar-status-btn.pending{ background:var(--cream);color:var(--slate-light);border-color:var(--border); }
+/* Incident cards */
+.pro-incident-card {
+  background:var(--white);border:1.5px solid var(--border);
+  border-radius:12px;padding:14px 16px;margin-bottom:10px;
+}
+.pro-severity-badge {
+  display:inline-block;font-size:.72rem;font-weight:700;
+  padding:2px 9px;border-radius:8px;margin-left:6px;
+}
+.sev-critical { background:var(--rose-pale);color:var(--rose); }
+.sev-moderate { background:var(--amber-pale);color:var(--amber); }
+.sev-minor    { background:var(--sage-pale);color:var(--sage); }
+/* Handoff */
+.handoff-block {
+  background:var(--cream);border-radius:10px;
+  padding:12px 14px;margin-bottom:10px;
+}
+.handoff-block-title {
+  font-size:.75rem;font-weight:700;text-transform:uppercase;
+  letter-spacing:.08em;color:var(--slate-light);margin-bottom:6px;
+}
+/* Pro tabs */
+.pro-tabs {
+  display:flex;gap:4px;flex-wrap:wrap;
+  border-bottom:2px solid var(--border);
+  margin-bottom:20px;padding-bottom:0;
+}
+.pro-tab {
+  padding:9px 14px;font-size:.84rem;font-weight:600;
+  border:none;background:none;cursor:pointer;
+  color:var(--slate-light);border-bottom:3px solid transparent;
+  margin-bottom:-2px;font-family:'DM Sans',sans-serif;
+  transition:all .15s;border-radius:6px 6px 0 0;
+}
+.pro-tab:hover { color:var(--slate);background:var(--cream); }
+.pro-tab.active { color:#6D28D9;border-bottom-color:#6D28D9;background:#F5F3FF; }
+.pro-panel { display:none; }
+.pro-panel.active { display:block; }
+
 </style>
   </head><body>
     <div class="header">
@@ -5200,33 +5613,72 @@ function renderAllergyPreviews(){
 // ════════════════════════════════════════════════════════════════
 // FREEMIUM UNLOCK SYSTEM
 // ════════════════════════════════════════════════════════════════
-const UNLOCK_KEY    = 'tendedUnlocked';
+// ════════════════════════════════════════════════════════════════
+// TENDED PREMIUM SYSTEM — Google Play Billing Ready
+// ════════════════════════════════════════════════════════════════
+const UNLOCK_KEY    = 'tendedUnlocked';       // 'true' when purchased
+const UNLOCK_SRC    = 'tendedUnlockSource';   // 'play' | 'url' | 'code'
 const TRIAL_KEY     = 'tendedTrialStart';
-const TRIAL_DAYS    = 7;   // 7 day free trial
-const TRIAL_ACTIONS = 30;  // or 30 actions (whichever comes first)
 const ACTION_KEY    = 'tendedActionCount';
+const TRIAL_DAYS    = 7;
+const TRIAL_ACTIONS = 30;
+const PLAY_PRODUCT  = 'tended_unlock';        // Must match Play Console product ID
+const PLAY_STORE_URL= 'https://play.google.com/store/apps/details?id=io.github.flougher.tended';
 
+// ── 1. PREMIUM STATE ──────────────────────────────────────────
+// isUnlocked() is the single source of truth throughout the app.
+// It checks (in order): purchased flag → URL param → trial window
 function isUnlocked(){
-  // Check if purchased
   if(localStorage.getItem(UNLOCK_KEY) === 'true') return true;
-  // Check trial validity
+  if(_checkURLParam()) return true;
+  return _trialActive();
+}
+
+function _checkURLParam(){
+  // Google Play TWA can pass ?premium=true on launch after purchase
+  // Also accepts ?unlock=TENDED499 for support/promo use
+  try {
+    const params = new URLSearchParams(window.location.search);
+    if(params.get('premium') === 'true'){
+      activateUnlock('url');
+      return true;
+    }
+    const code = params.get('unlock');
+    if(code && code.toUpperCase() === 'TENDED499'){
+      activateUnlock('url');
+      return true;
+    }
+  } catch(e){}
+  return false;
+}
+
+function _trialActive(){
   const start = localStorage.getItem(TRIAL_KEY);
   if(!start){
-    // First launch — start trial
     localStorage.setItem(TRIAL_KEY, Date.now().toString());
     localStorage.setItem(ACTION_KEY, '0');
     return true;
   }
-  const days = (Date.now() - parseInt(start)) / (1000 * 60 * 60 * 24);
+  const days    = (Date.now() - parseInt(start)) / (1000*60*60*24);
   const actions = parseInt(localStorage.getItem(ACTION_KEY) || '0');
-  // Trial active if within 7 days AND under 30 actions
   return days <= TRIAL_DAYS && actions <= TRIAL_ACTIONS;
 }
 
-function incrementAction(){
-  if(localStorage.getItem(UNLOCK_KEY) === 'true') return;
-  const count = parseInt(localStorage.getItem(ACTION_KEY) || '0') + 1;
-  localStorage.setItem(ACTION_KEY, count.toString());
+// ── 2. ACTIVATE PREMIUM ───────────────────────────────────────
+// Called by: Google Play billing callback, URL param, or unlock code
+function activateUnlock(source){
+  localStorage.setItem(UNLOCK_KEY, 'true');
+  localStorage.setItem(UNLOCK_SRC, source || 'unknown');
+  hideUnlockPrompt();
+  // Clean up URL param so it doesn't re-trigger on reload
+  if(window.history && window.history.replaceState){
+    const url = new URL(window.location.href);
+    url.searchParams.delete('premium');
+    url.searchParams.delete('unlock');
+    window.history.replaceState({}, '', url.toString());
+  }
+  toast('🎉 Tended unlocked! Thank you for your support.', 'var(--sage)');
+  renderAll();
 }
 
 function checkUnlock(){
@@ -5236,56 +5688,138 @@ function checkUnlock(){
 }
 
 function showUnlockPrompt(){
-  document.getElementById('unlock-overlay').classList.add('open');
+  const el = document.getElementById('unlock-overlay');
+  if(el) el.classList.add('open');
 }
 
 function hideUnlockPrompt(){
-  document.getElementById('unlock-overlay').classList.remove('open');
+  const el = document.getElementById('unlock-overlay');
+  if(el) el.classList.remove('open');
+}
+
+// ── 3. GOOGLE PLAY BILLING ────────────────────────────────────
+// purchaseUnlock() handles both environments:
+//   • Inside TWA (Android app): uses Digital Goods API → Play Billing
+//   • Web browser: redirects to Play Store
+async function purchaseUnlock(){
+  // Environment 1: Google Play TWA — Digital Goods API available
+  if(typeof getDigitalGoodsService === 'function'){
+    try {
+      const service = await getDigitalGoodsService('https://play.google.com/billing');
+      const details = await service.getDetails([PLAY_PRODUCT]);
+      if(!details || !details.length){
+        toast('Product not found. Please try again.', 'var(--amber)');
+        return;
+      }
+      const request = new PaymentRequest(
+        [{ supportedMethods: 'https://play.google.com/billing',
+           data: { sku: PLAY_PRODUCT } }],
+        { total: { label: 'Tended Unlock', amount: { currency: 'USD', value: '4.99' } } }
+      );
+      const response = await request.show();
+      await response.complete('success');
+      // Purchase confirmed — activate
+      activateUnlock('play');
+      // Acknowledge to Google (important — unacknowledged purchases are refunded after 3 days)
+      await service.acknowledge(response.details.purchaseToken, 'onetime');
+      return;
+    } catch(err){
+      if(err.name !== 'AbortError'){
+        toast('Purchase failed: ' + err.message, 'var(--amber)');
+      }
+      return;
+    }
+  }
+
+  // Environment 2: Web browser — redirect to Play Store
+  window.open(PLAY_STORE_URL, '_blank');
+  toast('Opening Google Play Store…', 'var(--teal)');
+}
+
+// ── 4. RESTORE PURCHASE ───────────────────────────────────────
+// Handles both TWA (queries Google Play) and web (manual code entry)
+async function restorePurchase(){
+  // TWA environment: query Google Play for existing purchases
+  if(typeof getDigitalGoodsService === 'function'){
+    try {
+      const service = await getDigitalGoodsService('https://play.google.com/billing');
+      const purchases = await service.listPurchases();
+      const found = purchases.find(p => p.itemId === PLAY_PRODUCT);
+      if(found){
+        activateUnlock('play');
+        toast('✅ Purchase restored!', 'var(--sage)');
+      } else {
+        toast('No purchase found on this Google account.', 'var(--amber)');
+      }
+      return;
+    } catch(err){
+      toast('Could not reach Google Play. Check connection.', 'var(--amber)');
+      return;
+    }
+  }
+
+  // Web fallback: code entry (for support / cross-device manual restore)
+  _showRestoreDialog();
+}
+
+function _showRestoreDialog(){
+  // Inline dialog — no browser prompt() needed
+  const existing = document.getElementById('restore-dialog');
+  if(existing) existing.remove();
+  const d = document.createElement('div');
+  d.id = 'restore-dialog';
+  d.style.cssText = 'position:fixed;inset:0;background:rgba(15,23,42,.7);z-index:7000;display:flex;align-items:center;justify-content:center;padding:20px;backdrop-filter:blur(4px)';
+  d.innerHTML = `
+    <div style="background:var(--white);border-radius:18px;padding:28px 26px;max-width:400px;width:100%;box-shadow:0 24px 60px rgba(0,0,0,.3)">
+      <div style="font-family:'Lora',serif;font-size:1.2rem;font-weight:700;color:var(--slate);margin-bottom:8px">Restore Purchase</div>
+      <p style="font-size:.86rem;color:var(--slate-light);margin-bottom:16px;line-height:1.6">
+        Enter your unlock code from your Google Play receipt, or email
+        <a href="mailto:socalreoking@gmail.com" style="color:var(--teal)">socalreoking@gmail.com</a>
+        for support.
+      </p>
+      <input id="restore-code-input" type="text" placeholder="Unlock code"
+        style="width:100%;border:1.5px solid var(--border);border-radius:10px;padding:11px 13px;font-size:.95rem;font-family:'DM Sans',sans-serif;outline:none;margin-bottom:14px;text-transform:uppercase;letter-spacing:.05em">
+      <div style="display:flex;gap:10px">
+        <button onclick="_submitRestoreCode()"
+          style="flex:2;background:var(--teal);color:white;border:none;border-radius:10px;padding:12px;font-size:.9rem;font-weight:700;cursor:pointer;font-family:'DM Sans',sans-serif">
+          Restore
+        </button>
+        <button onclick="document.getElementById('restore-dialog').remove()"
+          style="flex:1;background:var(--cream);color:var(--slate-mid);border:1.5px solid var(--border);border-radius:10px;padding:12px;font-size:.88rem;font-weight:600;cursor:pointer;font-family:'DM Sans',sans-serif">
+          Cancel
+        </button>
+      </div>
+    </div>`;
+  document.body.appendChild(d);
+  setTimeout(() => document.getElementById('restore-code-input')?.focus(), 100);
+}
+
+function _submitRestoreCode(){
+  const code = document.getElementById('restore-code-input')?.value.trim().toUpperCase();
+  if(code === 'TENDED499'){
+    document.getElementById('restore-dialog')?.remove();
+    activateUnlock('code');
+    toast('✅ Purchase restored!', 'var(--sage)');
+  } else {
+    toast('Invalid code. Contact socalreoking@gmail.com for help.', 'var(--amber)');
+  }
+}
+
+// ── 5. TRIAL HELPERS ──────────────────────────────────────────
+function incrementAction(){
+  if(localStorage.getItem(UNLOCK_KEY) === 'true') return;
+  const count = parseInt(localStorage.getItem(ACTION_KEY) || '0') + 1;
+  localStorage.setItem(ACTION_KEY, count.toString());
 }
 
 function getTrialStatus(){
   if(localStorage.getItem(UNLOCK_KEY) === 'true') return null;
   const start = localStorage.getItem(TRIAL_KEY);
-  if(!start) return { days: TRIAL_DAYS, actions: TRIAL_ACTIONS };
-  const daysUsed  = Math.floor((Date.now() - parseInt(start)) / (1000*60*60*24));
-  const daysLeft  = Math.max(0, TRIAL_DAYS - daysUsed);
+  if(!start) return { daysLeft: TRIAL_DAYS, actionsLeft: TRIAL_ACTIONS };
+  const daysUsed    = Math.floor((Date.now() - parseInt(start)) / (1000*60*60*24));
+  const daysLeft    = Math.max(0, TRIAL_DAYS - daysUsed);
   const actionsLeft = Math.max(0, TRIAL_ACTIONS - parseInt(localStorage.getItem(ACTION_KEY)||'0'));
   return { daysLeft, actionsLeft };
-}
-
-function purchaseUnlock(){
-  // On Google Play this triggers the in-app purchase flow
-  // For the web version we show a message directing to Play Store
-  if(typeof digitalGoods !== 'undefined'){
-    // Google Play Billing API
-    triggerPlayBilling();
-  } else {
-    // Web version — direct to Play Store
-    window.open('https://play.google.com/store/apps/details?id=io.github.flougher.tended','_blank');
-    // For testing — show a code entry option
-    const code = prompt('If you have an unlock code enter it here, or visit Google Play to purchase:');
-    if(code && code.trim().toUpperCase() === 'TENDED499'){
-      activateUnlock();
-    }
-  }
-}
-
-function activateUnlock(){
-  localStorage.setItem(UNLOCK_KEY, 'true');
-  hideUnlockPrompt();
-  toast('🎉 Tended unlocked! Thank you for your support.','var(--sage)');
-  renderAll();
-}
-
-function restorePurchase(){
-  // On Google Play this checks purchase history
-  // For web — prompt for code
-  const code = prompt('Enter your unlock code (from your Google Play receipt):');
-  if(code && code.trim().toUpperCase() === 'TENDED499'){
-    activateUnlock();
-  } else {
-    toast('No purchase found. Please contact socalreoking@gmail.com for help.','var(--amber)');
-  }
 }
 
 function renderTrialBanner(){
@@ -5303,6 +5837,8 @@ function renderTrialBanner(){
     if(shell) shell.insertBefore(banner, shell.firstChild);
   }
 }
+
+
 
 // Init
 function init(){
