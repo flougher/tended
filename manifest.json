@@ -1,6 +1,6 @@
 {
-  "name": "Tended: Senior Health Companion",
-  "short_name": "Tended",
+  "name": "Tended Health",
+  "short_name": "Tended Health",
   "description": "Private health companion for seniors. Medications, vitals & appointments.",
   "start_url": "https://flougher.github.io/tended/",
   "scope": "https://flougher.github.io/tended/",
