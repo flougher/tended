@@ -969,8 +969,9 @@ body.high-contrast .nav-item.active{outline:2px solid var(--teal)}
 
 <!-- CAREGIVER BANNER -->
 <div class="caregiver-banner" id="caregiver-banner">
-  <span>👁 Caregiver View — Read Only</span>
-  <button onclick="exitCaregiverMode()" style="margin-left:auto;background:rgba(255,255,255,.2);border:none;color:white;border-radius:8px;padding:5px 12px;cursor:pointer;font-family:'DM Sans',sans-serif;font-weight:700;font-size:.85rem">Exit</button>
+  <span style="font-size:.95rem">👁 Caregiver View — Read Only</span>
+  <span style="font-size:.8rem;opacity:.7;margin-left:6px">No changes can be made</span>
+  <button onclick="exitCaregiverModePrompt()" style="margin-left:auto;background:rgba(255,255,255,.25);border:1px solid rgba(255,255,255,.4);color:white;border-radius:8px;padding:6px 14px;cursor:pointer;font-family:'DM Sans',sans-serif;font-weight:700;font-size:.85rem">🔓 Exit</button>
 </div>
 
 <!-- TOP BAR -->
@@ -1206,7 +1207,7 @@ body.high-contrast .nav-item.active{outline:2px solid var(--teal)}
 
 <!-- INSURANCE -->
 <div id="section-insurance" class="section">
-  <div class="page-header"><div><div class="page-title">📋 Insurance & Claims</div><div class="page-sub">Track Medicare, Medicaid, and supplemental claims</div></div><button class="btn btn-primary no-caregiver" onclick="openModal('claim-modal')">+ Add Claim</button></div>
+  <div class="page-header"><div><div class="page-title">📋 Insurance & Claims</div><div class="page-sub">Track Medicare, Medicaid, and supplemental claims</div></div><button class="btn btn-primary no-caregiver" onclick="openAddClaim()">+ Add Claim</button></div>
   <div style="display:flex;gap:14px;margin-bottom:20px;flex-wrap:wrap" id="insurance-stats"></div>
   <div id="claims-full"><div class="empty"><div class="ei">📋</div><p>No claims yet.</p></div></div>
 </div>
@@ -1308,17 +1309,80 @@ body.high-contrast .nav-item.active{outline:2px solid var(--teal)}
 
 <!-- CAREGIVER -->
 <div id="section-caregiver" class="section">
-  <div class="page-header"><div><div class="page-title">👁 Caregiver Mode</div><div class="page-sub">Share a read-only view with a trusted family member or caregiver</div></div></div>
+  <div class="page-header"><div><div class="page-title">👁 Caregiver Mode</div><div class="page-sub">Give a trusted helper read-only access to health information</div></div></div>
+
+  <!-- What is Caregiver Mode explainer -->
+  <div class="card" style="margin-bottom:16px;border-left:4px solid #7C3AED">
+    <div class="card-title" style="color:#7C3AED">What is Caregiver Mode?</div>
+    <p style="font-size:.9rem;color:var(--slate-mid);line-height:1.75;margin-bottom:14px">
+      Caregiver Mode gives a <strong>home health aide, CNA, family member, or trusted helper</strong> a simplified view of your health information — without being able to change, add, or delete anything.
+    </p>
+    <p style="font-size:.9rem;color:var(--slate-mid);line-height:1.75;margin-bottom:14px">
+      You create a separate <strong>4-digit Caregiver PIN</strong>. Hand your phone to the caregiver and they enter that PIN to view your information. Your main PIN stays private — the caregiver never sees it.
+    </p>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:4px">
+      <div style="background:var(--teal-pale);border-radius:10px;padding:12px;font-size:.85rem;color:var(--teal)">
+        <strong style="display:block;margin-bottom:6px">✅ Caregiver can see:</strong>
+        Today's medications &amp; checklist<br>
+        Upcoming appointments<br>
+        Recent vitals summary<br>
+        Emergency contacts<br>
+        Allergies &amp; conditions
+      </div>
+      <div style="background:var(--rose-pale,#FFF1F2);border-radius:10px;padding:12px;font-size:.85rem;color:var(--rose,#BE123C)">
+        <strong style="display:block;margin-bottom:6px">🚫 Caregiver cannot:</strong>
+        Add or edit any data<br>
+        Delete medications or records<br>
+        Change settings or PIN<br>
+        Access AI assistant<br>
+        Export or share data
+      </div>
+    </div>
+  </div>
+
   <div class="grid-2">
     <div>
-      <div class="card" style="margin-bottom:16px"><div class="card-title">🔐 Enter Caregiver View</div>
-        <p style="font-size:.9rem;color:var(--slate-mid);margin-bottom:16px;line-height:1.7">Lets a trusted person see your health data — <strong>without being able to change anything</strong>.</p>
-        <div class="form-group"><label>Caregiver PIN (4 digits)</label><input type="password" id="cg-pin-input" maxlength="4" placeholder="Create a caregiver PIN" style="letter-spacing:.3em;font-size:1.2rem;text-align:center"></div>
-        <div style="display:flex;gap:10px"><button class="btn btn-purple" onclick="enterCaregiverMode()">👁 Enter Caregiver View</button><button class="btn btn-secondary btn-sm" onclick="saveCaregiverPin()">Save PIN</button></div></div>
-      <div class="card"><div class="card-title">📤 Share Info</div>
-        <div style="background:var(--indigo-pale);border:1.5px solid #C7D2FE;border-radius:10px;padding:12px 14px;font-size:.85rem;color:var(--indigo)">🔐 <strong>Can see:</strong> Today's meds, upcoming appts, recent vitals<br><br>🚫 <strong>Cannot do:</strong> Add, edit, or delete any data</div></div>
+      <!-- Step 1: Set up PIN -->
+      <div class="card" style="margin-bottom:16px">
+        <div class="card-title">🔐 Step 1 — Set Your Caregiver PIN</div>
+        <p style="font-size:.87rem;color:var(--slate-mid);margin-bottom:14px;line-height:1.6">Create a 4-digit PIN for your caregiver. This is <strong>different from your main PIN</strong> — your caregiver uses this to open the read-only view.</p>
+        <div class="form-group">
+          <label>New Caregiver PIN (4 digits)</label>
+          <input type="password" id="cg-pin-input" maxlength="4" placeholder="e.g. 1234" style="letter-spacing:.3em;font-size:1.4rem;text-align:center;width:140px">
+        </div>
+        <div id="cg-pin-status" style="font-size:.82rem;color:var(--slate-light);margin-bottom:12px"></div>
+        <button class="btn btn-secondary" onclick="saveCaregiverPin()">💾 Save Caregiver PIN</button>
+      </div>
+
+      <!-- Step 2: Enter caregiver view -->
+      <div class="card" style="margin-bottom:16px">
+        <div class="card-title">👁 Step 2 — Enter Caregiver View</div>
+        <p style="font-size:.87rem;color:var(--slate-mid);margin-bottom:14px;line-height:1.6">Hand your phone to your caregiver. They enter the Caregiver PIN to access the read-only view. <strong>Your main PIN stays completely private.</strong></p>
+        <div class="form-group">
+          <label>Enter Caregiver PIN to activate</label>
+          <input type="password" id="cg-pin-enter" maxlength="4" placeholder="Enter PIN" style="letter-spacing:.3em;font-size:1.4rem;text-align:center;width:140px">
+        </div>
+        <button class="btn btn-purple" onclick="enterCaregiverMode()" style="background:#7C3AED;border:none;color:white">👁 Activate Caregiver View</button>
+      </div>
+
+      <!-- How to exit -->
+      <div class="card" style="background:var(--amber-pale);border:1.5px solid #FCD34D">
+        <div class="card-title" style="color:var(--amber)">⚠️ How to Exit Caregiver Mode</div>
+        <p style="font-size:.87rem;color:var(--amber);line-height:1.6">When Caregiver Mode is active an <strong>Exit</strong> button appears in a purple banner at the top of every screen. Tap it to return to the full app. You will be asked for your <strong>main PIN</strong> to confirm it is you.</p>
+      </div>
     </div>
-    <div class="card" style="align-self:start"><div class="card-title">👁 Live Preview</div><div id="cg-preview"><p style="color:var(--slate-light);font-size:.9rem">Enter Caregiver Mode to see this view.</p></div></div>
+
+    <!-- Live preview -->
+    <div class="card" style="align-self:start">
+      <div class="card-title">👁 Preview — What the Caregiver Sees</div>
+      <p style="font-size:.82rem;color:var(--slate-light);margin-bottom:14px">This is the simplified view your caregiver will see when they activate Caregiver Mode.</p>
+      <div id="cg-preview">
+        <div style="text-align:center;padding:24px;color:var(--slate-light);font-size:.88rem">
+          <div style="font-size:1.8rem;margin-bottom:8px">👁</div>
+          Save a Caregiver PIN above to see a preview of the caregiver view.
+        </div>
+      </div>
+    </div>
   </div>
 </div>
 
@@ -1327,7 +1391,7 @@ body.high-contrast .nav-item.active{outline:2px solid var(--teal)}
   <div class="page-header"><div><div class="page-title">👨‍👩‍👧 Family Loop</div><div class="page-sub">Trusted people who can view your health and schedule</div></div>
   <div style="display:flex;gap:8px;flex-wrap:wrap">
     <button class="btn btn-secondary" onclick="openDailySummary()">📋 Daily Summary</button>
-    <button class="btn btn-primary" onclick="openModal('family-modal')">+ Add Member</button>
+    <button class="btn btn-primary" onclick="openAddFamily()">+ Add Member</button>
   </div></div>
   <div class="grid-2">
     <div id="family-list-area"></div>
@@ -1479,18 +1543,85 @@ body.high-contrast .nav-item.active{outline:2px solid var(--teal)}
         </div>
       </div>
       <div class="card"><div class="card-title">💾 Data & Transfer</div>
-        <p style="font-size:.85rem;color:var(--slate-light);margin-bottom:14px;line-height:1.6">Export your data before updating to a new version. Import it back into the new app to restore everything instantly.</p>
-        <div style="display:flex;flex-direction:column;gap:10px">
-          <div style="display:flex;gap:10px;flex-wrap:wrap">
-            <button class="btn btn-primary btn-sm" onclick="exportData()" style="flex:1;justify-content:center">📤 Export / Backup</button>
-            <button class="btn btn-secondary btn-sm" onclick="document.getElementById('import-file-input').click()" style="flex:1;justify-content:center">📥 Import / Restore</button>
+
+        <!-- What is stored -->
+        <div style="background:var(--teal-pale);border:1.5px solid var(--teal-mid);border-radius:12px;padding:14px 16px;margin-bottom:14px">
+          <div style="font-size:.82rem;font-weight:700;color:var(--teal);margin-bottom:8px">📦 What gets saved in your backup:</div>
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:4px 12px;font-size:.82rem;color:var(--teal)">
+            <div>✓ All medications &amp; schedule</div>
+            <div>✓ Appointments</div>
+            <div>✓ Health log &amp; vitals</div>
+            <div>✓ Symptoms</div>
+            <div>✓ Insurance claims</div>
+            <div>✓ Emergency contacts</div>
+            <div>✓ Family Loop members</div>
+            <div>✓ Documents &amp; cards</div>
+            <div>✓ Settings &amp; preferences</div>
+            <div>✓ All profiles</div>
           </div>
+        </div>
+
+        <!-- Export button -->
+        <div style="margin-bottom:14px">
+          <div style="font-size:.84rem;font-weight:700;color:var(--slate);margin-bottom:6px">📤 Export — Create a Backup</div>
+          <p style="font-size:.82rem;color:var(--slate-light);margin-bottom:10px;line-height:1.6">Creates a <strong>tended-backup.json</strong> file saved to your phone. Export regularly — especially before getting a new phone or clearing your browser.</p>
+          <button class="btn btn-primary btn-sm" onclick="exportData()" style="width:100%;justify-content:center">📤 Export All Data (Backup)</button>
+        </div>
+
+        <!-- Import button -->
+        <div style="margin-bottom:14px">
+          <div style="font-size:.84rem;font-weight:700;color:var(--slate);margin-bottom:6px">📥 Import — Restore a Backup</div>
+          <p style="font-size:.82rem;color:var(--slate-light);margin-bottom:10px;line-height:1.6">Select a <strong>tended-backup.json</strong> file to restore all your data. Everything comes back exactly as it was.</p>
+          <button class="btn btn-secondary btn-sm" onclick="document.getElementById('import-file-input').click()" style="width:100%;justify-content:center">📥 Import Backup File</button>
           <input type="file" id="import-file-input" accept=".json" style="display:none" onchange="importData(this)">
-          <div id="import-status" style="display:none;font-size:.84rem;border-radius:10px;padding:10px 14px"></div>
-          <div style="background:var(--teal-pale);border:1px solid var(--teal-mid);border-radius:10px;padding:10px 14px;font-size:.82rem;color:var(--teal);line-height:1.6">
-            💡 <strong>Updating the app?</strong> Tap Export, save the file, open the new version, tap Import, and select your saved file.
+          <div id="import-status" style="display:none;font-size:.84rem;border-radius:10px;padding:10px 14px;margin-top:8px"></div>
+        </div>
+
+        <!-- Transfer to new phone -->
+        <div style="background:var(--indigo-pale,#EEF2FF);border:1.5px solid #C7D2FE;border-radius:12px;padding:14px 16px;margin-bottom:14px">
+          <div style="font-size:.83rem;font-weight:700;color:#4338CA;margin-bottom:10px">📱 How to Transfer to a New Phone</div>
+          <div style="display:flex;flex-direction:column;gap:8px">
+            <div style="display:flex;gap:10px;align-items:flex-start;font-size:.82rem;color:#4338CA">
+              <span style="background:#4338CA;color:white;border-radius:50%;width:20px;height:20px;display:flex;align-items:center;justify-content:center;font-size:.7rem;font-weight:700;flex-shrink:0">1</span>
+              <span>On your <strong>old phone</strong> — tap <strong>Export All Data</strong> above. A file called <em>tended-backup.json</em> saves to your downloads.</span>
+            </div>
+            <div style="display:flex;gap:10px;align-items:flex-start;font-size:.82rem;color:#4338CA">
+              <span style="background:#4338CA;color:white;border-radius:50%;width:20px;height:20px;display:flex;align-items:center;justify-content:center;font-size:.7rem;font-weight:700;flex-shrink:0">2</span>
+              <span>Send the file to yourself — email it to <strong>socalreoking@gmail.com</strong> or upload it to <strong>Google Drive</strong>.</span>
+            </div>
+            <div style="display:flex;gap:10px;align-items:flex-start;font-size:.82rem;color:#4338CA">
+              <span style="background:#4338CA;color:white;border-radius:50%;width:20px;height:20px;display:flex;align-items:center;justify-content:center;font-size:.7rem;font-weight:700;flex-shrink:0">3</span>
+              <span>On your <strong>new phone</strong> — download Tended Health from Google Play. Open the app and complete setup.</span>
+            </div>
+            <div style="display:flex;gap:10px;align-items:flex-start;font-size:.82rem;color:#4338CA">
+              <span style="background:#4338CA;color:white;border-radius:50%;width:20px;height:20px;display:flex;align-items:center;justify-content:center;font-size:.7rem;font-weight:700;flex-shrink:0">4</span>
+              <span>Go to <strong>Settings → Import Backup File</strong>. Select your <em>tended-backup.json</em> file. Everything restores instantly.</span>
+            </div>
           </div>
-          <button class="btn btn-danger btn-sm" onclick="clearAllData()" style="justify-content:center">🗑️ Clear All Data</button>
+        </div>
+
+        <!-- Important warning -->
+        <div style="background:#FFF7ED;border:1.5px solid #FED7AA;border-radius:12px;padding:12px 14px;margin-bottom:14px">
+          <div style="font-size:.82rem;font-weight:700;color:#C2410C;margin-bottom:6px">⚠️ Important — Data is Stored on This Device Only</div>
+          <p style="font-size:.81rem;color:#9A3412;line-height:1.65;margin:0">
+            Tended Health stores all data <strong>locally on your device only</strong>. There is no cloud backup. If you delete the app, clear your browser storage, or get a new phone <strong>without exporting first</strong>, your data <strong>cannot be recovered</strong>.<br><br>
+            <strong>We recommend exporting once a month</strong> and saving the file to Google Drive or emailing it to yourself.
+          </p>
+        </div>
+
+        <!-- When to export reminders -->
+        <div style="font-size:.82rem;color:var(--slate-mid);margin-bottom:14px;line-height:1.8">
+          <strong style="display:block;margin-bottom:4px;color:var(--slate)">🗓️ Export before you:</strong>
+          · Get a new Android phone &nbsp;·&nbsp; Clear browser or app data<br>
+          · Reinstall the app &nbsp;·&nbsp; Update to a new version<br>
+          · Travel away from home for extended periods
+        </div>
+
+        <!-- Clear all data — danger zone -->
+        <div style="border-top:1.5px solid var(--border);padding-top:14px">
+          <div style="font-size:.82rem;font-weight:700;color:var(--rose,#BE123C);margin-bottom:6px">🗑️ Danger Zone</div>
+          <p style="font-size:.81rem;color:var(--slate-light);margin-bottom:10px;line-height:1.6">This permanently deletes all your health data from this device. Export a backup first.</p>
+          <button class="btn btn-danger btn-sm" onclick="clearAllData()" style="justify-content:center;width:100%">🗑️ Clear All Data — Cannot Be Undone</button>
         </div>
       </div>
     </div>
@@ -1624,12 +1755,12 @@ body.high-contrast .nav-item.active{outline:2px solid var(--teal)}
   <div class="modal-actions"><button class="btn btn-secondary" onclick="symModalCancel()">Cancel</button><button class="btn btn-primary" id="symptom-modal-save-btn" onclick="symModalSave()">Log</button></div>
 </div></div>
 
-<div class="overlay" id="claim-modal"><div class="modal"><h2>📋 Add Insurance Claim</h2>
+<div class="overlay" id="claim-modal"><div class="modal"><h2 id="claim-modal-title">📋 Add Insurance Claim</h2>
   <div class="form-group"><label>Description *</label><input id="cl-desc" placeholder="Annual physical…"></div>
   <div class="form-row"><div class="form-group"><label>Date of Service</label><input type="date" id="cl-date"></div><div class="form-group"><label>Billed Amount ($)</label><input type="number" id="cl-amt" step="0.01"></div></div>
   <div class="form-row"><div class="form-group"><label>Insurance Provider</label><input id="cl-prov" placeholder="Medicare Part B"></div><div class="form-group"><label>Claim Number</label><input id="cl-num"></div></div>
   <div class="form-row"><div class="form-group"><label>Status</label><select id="cl-status"><option value="pending">Pending</option><option value="approved">Approved</option><option value="review">Under Review</option><option value="denied">Denied</option></select></div><div class="form-group"><label>Amount Paid ($)</label><input type="number" id="cl-paid" step="0.01"></div></div>
-  <div class="modal-actions"><button class="btn btn-secondary" onclick="closeModal('claim-modal')">Cancel</button><button class="btn btn-primary" onclick="addClaim()">Save</button></div>
+  <div class="modal-actions"><button class="btn btn-secondary" onclick="closeModal('claim-modal')">Cancel</button><button class="btn btn-primary" id="claim-save-btn" onclick="saveClaim()">Save Claim</button></div>
 </div></div>
 
 <div class="overlay" id="doc-modal"><div class="modal"><h2>📁 Add Document</h2>
@@ -1646,12 +1777,12 @@ body.high-contrast .nav-item.active{outline:2px solid var(--teal)}
   <div class="modal-actions"><button class="btn btn-secondary" onclick="closeModal('doc-modal');clearDocPhoto()">Cancel</button><button class="btn btn-primary" onclick="addDoc()">Save</button></div>
 </div></div>
 
-<div class="overlay" id="family-modal"><div class="modal"><h2>👨‍👩‍👧 Add Family Member</h2>
+<div class="overlay" id="family-modal"><div class="modal"><h2 id="family-modal-title">👨‍👩‍👧 Add Family Member</h2>
   <div class="form-group"><label>Name *</label><input id="f-name" placeholder="Michael Johnson"></div>
   <div class="form-row"><div class="form-group"><label>Relationship</label><select id="f-rel"><option>Son</option><option>Daughter</option><option>Spouse</option><option>Partner</option><option>Sibling</option><option>Friend</option><option>Caregiver</option><option>Other</option></select></div><div class="form-group"><label>Phone</label><input type="tel" id="f-phone" placeholder="(555) 000-0000"></div></div>
   <div class="form-group"><label>Email</label><input type="email" id="f-email"></div>
   <div class="form-group"><label>Access Level</label><select id="f-access"><option value="all">Full View — Medications, Appointments, Health Log</option><option value="appts">Appointments Only</option><option value="emergency">Emergency Contact Only</option></select></div>
-  <div class="modal-actions"><button class="btn btn-secondary" onclick="closeModal('family-modal')">Cancel</button><button class="btn btn-primary" onclick="addFamily()">Add</button></div>
+  <div class="modal-actions"><button class="btn btn-secondary" onclick="closeModal('family-modal')">Cancel</button><button class="btn btn-primary" id="family-save-btn" onclick="saveFamily()">Add Member</button></div>
 </div></div>
 
 <div class="overlay" id="contact-modal"><div class="modal">
@@ -1981,16 +2112,91 @@ function disablePin(){
 }
 
 // Caregiver
-function saveCaregiverPin(){const v=document.getElementById('cg-pin-input').value.trim();if(v.length!==4||isNaN(v)){toast('Please enter exactly 4 digits','var(--amber)');return;}localStorage.setItem(CG_PIN_KEY,btoa(v));toast('✅ Caregiver PIN saved!','var(--sage)');}
-function enterCaregiverMode(){
-  const input=document.getElementById('cg-pin-input').value.trim();const stored=localStorage.getItem(CG_PIN_KEY);
-  if(!stored){toast('Please create a Caregiver PIN first','var(--amber)');return;}
-  if(input!==atob(stored)){toast('Incorrect Caregiver PIN','#DC2626');return;}
-  caregiverMode=true;document.getElementById('caregiver-banner').classList.add('show');
-  document.querySelectorAll('.no-caregiver').forEach(el=>el.style.display='none');
-  renderCgPreview();navTo('dashboard');toast('👁 Caregiver view active','#7C3AED');
+// ── Caregiver Mode — full rebuild ──────────────────────────
+function saveCaregiverPin(){
+  const v = document.getElementById('cg-pin-input')?.value.trim();
+  if(!v || v.length !== 4 || isNaN(v)){
+    toast('Please enter exactly 4 digits','var(--amber)');
+    return;
+  }
+  localStorage.setItem(CG_PIN_KEY, btoa(v));
+  const status = document.getElementById('cg-pin-status');
+  if(status) status.textContent = '✅ Caregiver PIN saved — share this PIN with your caregiver only.';
+  if(status) status.style.color = 'var(--sage)';
+  // Show preview after PIN is set
+  renderCgPreview();
+  toast('✅ Caregiver PIN saved!','var(--sage)');
 }
-function exitCaregiverMode(){caregiverMode=false;document.getElementById('caregiver-banner').classList.remove('show');document.querySelectorAll('.no-caregiver').forEach(el=>el.style.display='');}
+
+function enterCaregiverMode(){
+  const input  = document.getElementById('cg-pin-enter')?.value.trim();
+  const stored = localStorage.getItem(CG_PIN_KEY);
+  if(!stored){
+    toast('Please create a Caregiver PIN in Step 1 first','var(--amber)');
+    return;
+  }
+  if(!input || input !== atob(stored)){
+    toast('Incorrect Caregiver PIN. Try again.','#DC2626');
+    return;
+  }
+  caregiverMode = true;
+  document.getElementById('caregiver-banner').classList.add('show');
+  document.querySelectorAll('.no-caregiver').forEach(el => el.style.display = 'none');
+  document.getElementById('cg-pin-enter').value = '';
+  renderCgPreview();
+  navTo('dashboard');
+  toast('👁 Caregiver view is now active','#7C3AED');
+}
+
+function exitCaregiverModePrompt(){
+  // Show exit dialog — requires main PIN to exit
+  const existing = document.getElementById('cg-exit-dialog');
+  if(existing) existing.remove();
+  const d = document.createElement('div');
+  d.id = 'cg-exit-dialog';
+  d.style.cssText = 'position:fixed;inset:0;background:rgba(15,23,42,.75);z-index:9000;display:flex;align-items:center;justify-content:center;padding:20px;backdrop-filter:blur(4px)';
+  d.innerHTML = `
+    <div style="background:white;border-radius:18px;padding:26px;max-width:340px;width:100%;text-align:center;box-shadow:0 24px 60px rgba(0,0,0,.3)">
+      <div style="font-size:2rem;margin-bottom:10px">🔓</div>
+      <div style="font-family:'Lora',serif;font-size:1.1rem;font-weight:700;color:#1E293B;margin-bottom:8px">Exit Caregiver Mode</div>
+      <p style="font-size:.86rem;color:#64748B;margin-bottom:16px;line-height:1.6">Enter your <strong>main PIN</strong> to return to the full app.</p>
+      <input id="cg-exit-pin" type="password" maxlength="4" placeholder="Main PIN"
+        style="width:140px;border:1.5px solid #E2D9CC;border-radius:10px;padding:12px;font-size:1.4rem;letter-spacing:.3em;text-align:center;font-family:'DM Sans',sans-serif;outline:none;margin-bottom:14px;display:block;margin-left:auto;margin-right:auto">
+      <div style="display:flex;gap:8px">
+        <button onclick="_confirmExitCaregiver()"
+          style="flex:2;background:#7C3AED;color:white;border:none;border-radius:10px;padding:12px;font-size:.9rem;font-weight:700;cursor:pointer;font-family:'DM Sans',sans-serif">
+          Exit Caregiver Mode
+        </button>
+        <button onclick="document.getElementById('cg-exit-dialog').remove()"
+          style="flex:1;background:#F8FAFC;color:#64748B;border:1.5px solid #E2D9CC;border-radius:10px;padding:12px;font-size:.87rem;font-weight:600;cursor:pointer;font-family:'DM Sans',sans-serif">
+          Cancel
+        </button>
+      </div>
+    </div>`;
+  document.body.appendChild(d);
+  setTimeout(() => document.getElementById('cg-exit-pin')?.focus(), 100);
+}
+
+function _confirmExitCaregiver(){
+  const input  = document.getElementById('cg-exit-pin')?.value.trim();
+  const stored = localStorage.getItem(PIN_KEY);
+  // If no PIN is set, allow exit freely
+  if(!stored){ exitCaregiverMode(); return; }
+  if(input && input === atob(stored)){
+    document.getElementById('cg-exit-dialog')?.remove();
+    exitCaregiverMode();
+  } else {
+    toast('Incorrect PIN. Try again.','#DC2626');
+  }
+}
+
+function exitCaregiverMode(){
+  caregiverMode = false;
+  document.getElementById('caregiver-banner').classList.remove('show');
+  document.querySelectorAll('.no-caregiver').forEach(el => el.style.display = '');
+  document.getElementById('cg-exit-dialog')?.remove();
+  toast('✅ Returned to full app','var(--sage)');
+}
 function renderCgPreview(){
   const el=document.getElementById('cg-preview');if(!el)return;
   const today=new Date().toDateString();const done=D.meds.filter(m=>D.medChecks[m.id+'_'+today]).length;
@@ -3439,19 +3645,106 @@ function deleteSym(id){D.symptoms=D.symptoms.filter(s=>s.id!==id);save();renderA
 function exportSymptoms(){if(!D.symptoms.length){toast('No symptoms to export');return;}const lines=['SYMPTOM LOG — Tended','Generated: '+new Date().toLocaleDateString(),'','Date | Symptoms | Severity | Notes'];D.symptoms.forEach(s=>lines.push(`${new Date(s.dt).toLocaleDateString()} | ${s.symptoms.join(', ')} | ${s.severity} | ${s.notes||''}`));const blob=new Blob([lines.join('\n')],{type:'text/plain'});const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='symptom-log.txt';a.click();toast('✅ Exported!','var(--sage)');}
 
 // Insurance
-function addClaim(){const desc=document.getElementById('cl-desc').value.trim();if(!desc){toast('Please enter a description');return;}D.claims.push({id:Date.now(),desc,date:document.getElementById('cl-date').value,amt:document.getElementById('cl-amt').value,prov:document.getElementById('cl-prov').value,num:document.getElementById('cl-num').value,status:document.getElementById('cl-status').value,paid:document.getElementById('cl-paid').value});save();closeModal('claim-modal');clearInputs(['cl-desc','cl-date','cl-amt','cl-prov','cl-num','cl-paid']);renderAll();toast('✅ Claim saved!','var(--sage)');}
+// ── Insurance & Claims — full edit/delete/save system ───────
+let _editClaimId = null;
+
+function openAddClaim(){
+  _editClaimId = null;
+  const title = document.getElementById('claim-modal-title');
+  const btn   = document.getElementById('claim-save-btn');
+  if(title) title.textContent = '📋 Add Insurance Claim';
+  if(btn)   btn.textContent   = 'Save Claim';
+  clearInputs(['cl-desc','cl-date','cl-amt','cl-prov','cl-num','cl-paid']);
+  document.getElementById('cl-status').value = 'pending';
+  openModal('claim-modal');
+}
+
+function editClaim(id){
+  const c = D.claims.find(x => x.id === id);
+  if(!c) return;
+  _editClaimId = id;
+  const title = document.getElementById('claim-modal-title');
+  const btn   = document.getElementById('claim-save-btn');
+  if(title) title.textContent = '✏️ Edit Insurance Claim';
+  if(btn)   btn.textContent   = 'Update Claim';
+  const set = (elId, val) => { const el = document.getElementById(elId); if(el) el.value = val || ''; };
+  set('cl-desc',   c.desc);
+  set('cl-date',   c.date);
+  set('cl-amt',    c.amt);
+  set('cl-prov',   c.prov);
+  set('cl-num',    c.num);
+  set('cl-status', c.status);
+  set('cl-paid',   c.paid);
+  openModal('claim-modal');
+}
+
+function saveClaim(){
+  const desc = document.getElementById('cl-desc').value.trim();
+  if(!desc){ toast('Please enter a description'); return; }
+  const fields = {
+    desc,
+    date:   document.getElementById('cl-date').value,
+    amt:    document.getElementById('cl-amt').value,
+    prov:   document.getElementById('cl-prov').value,
+    num:    document.getElementById('cl-num').value,
+    status: document.getElementById('cl-status').value,
+    paid:   document.getElementById('cl-paid').value
+  };
+  if(_editClaimId !== null){
+    const idx = D.claims.findIndex(x => x.id === _editClaimId);
+    if(idx !== -1) D.claims[idx] = { ...D.claims[idx], ...fields };
+    toast('✅ Claim updated!', 'var(--sage)');
+  } else {
+    D.claims.push({ id: Date.now(), ...fields });
+    toast('✅ Claim saved!', 'var(--sage)');
+  }
+  _editClaimId = null;
+  save(); closeModal('claim-modal');
+  clearInputs(['cl-desc','cl-date','cl-amt','cl-prov','cl-num','cl-paid']);
+  renderAll();
+}
+
 function renderClaims(){
-  const el=document.getElementById('claims-full'),stats=document.getElementById('insurance-stats');
+  const el=document.getElementById('claims-full'), stats=document.getElementById('insurance-stats');
   const pending=D.claims.filter(c=>c.status==='pending'||c.status==='review').length;
   document.getElementById('d-claims').textContent=pending;
-  const nb=document.getElementById('nb-claims');if(pending>0){nb.textContent=pending;nb.style.display='inline';}else nb.style.display='none';
-  const total=D.claims.reduce((s,c)=>s+(parseFloat(c.amt)||0),0),paid=D.claims.reduce((s,c)=>s+(parseFloat(c.paid)||0),0);
-  stats.innerHTML=`<div class="card" style="flex:1;min-width:120px;text-align:center"><div style="font-size:1.4rem;font-weight:800">${D.claims.length}</div><div style="font-size:.8rem;color:var(--slate-light)">Total</div></div><div class="card" style="flex:1;min-width:120px;text-align:center"><div style="font-size:1.4rem;font-weight:800;color:var(--amber)">${pending}</div><div style="font-size:.8rem;color:var(--slate-light)">Pending</div></div><div class="card" style="flex:1;min-width:120px;text-align:center"><div style="font-size:1.4rem;font-weight:800">$${total.toFixed(0)}</div><div style="font-size:.8rem;color:var(--slate-light)">Billed</div></div><div class="card" style="flex:1;min-width:120px;text-align:center"><div style="font-size:1.4rem;font-weight:800;color:var(--sage)">$${paid.toFixed(0)}</div><div style="font-size:.8rem;color:var(--slate-light)">Paid</div></div>`;
-  if(!D.claims.length){el.innerHTML='<div class="empty"><div class="ei">📋</div><p>No claims yet.</p></div>';return;}
+  const nb=document.getElementById('nb-claims');
+  if(pending>0){nb.textContent=pending;nb.style.display='inline';}else nb.style.display='none';
+  const total=D.claims.reduce((s,c)=>s+(parseFloat(c.amt)||0),0);
+  const paid=D.claims.reduce((s,c)=>s+(parseFloat(c.paid)||0),0);
+  stats.innerHTML=`
+    <div class="card" style="flex:1;min-width:120px;text-align:center"><div style="font-size:1.4rem;font-weight:800">${D.claims.length}</div><div style="font-size:.8rem;color:var(--slate-light)">Total</div></div>
+    <div class="card" style="flex:1;min-width:120px;text-align:center"><div style="font-size:1.4rem;font-weight:800;color:var(--amber)">${pending}</div><div style="font-size:.8rem;color:var(--slate-light)">Pending</div></div>
+    <div class="card" style="flex:1;min-width:120px;text-align:center"><div style="font-size:1.4rem;font-weight:800">$${total.toFixed(0)}</div><div style="font-size:.8rem;color:var(--slate-light)">Billed</div></div>
+    <div class="card" style="flex:1;min-width:120px;text-align:center"><div style="font-size:1.4rem;font-weight:800;color:var(--sage)">$${paid.toFixed(0)}</div><div style="font-size:.8rem;color:var(--slate-light)">Paid</div></div>`;
+  if(!D.claims.length){el.innerHTML='<div class="empty"><div class="ei">📋</div><p>No claims yet. Tap + Add Claim to get started.</p></div>';return;}
   const labels={approved:'Approved ✓',pending:'Pending…',review:'Under Review',denied:'Denied'};
-  el.innerHTML=D.claims.map(c=>`<div class="claim-row"><div class="status-dot ${c.status}"></div><div style="flex:1"><strong>${c.desc}</strong><div style="font-size:.82rem;color:var(--slate-light)">${[c.prov,c.date,c.num?'#'+c.num:''].filter(Boolean).join(' · ')}</div><div style="font-size:.83rem;font-weight:600;color:${c.status==='approved'?'var(--sage)':c.status==='denied'?'var(--rose)':'var(--amber)'}">${labels[c.status]||c.status}</div></div><div style="text-align:right">${c.amt?`<div style="font-weight:700">$${parseFloat(c.amt).toFixed(2)}</div>`:''}${c.paid?`<div style="font-size:.8rem;color:var(--sage)">Paid: $${parseFloat(c.paid).toFixed(2)}</div>`:''}</div>${caregiverMode?'':`<button onclick="deleteClaim(${c.id})" class="btn btn-danger btn-sm" style="margin-left:10px">✕</button>`}</div>`).join('');
+  el.innerHTML=D.claims.map(c=>`
+    <div class="claim-row">
+      <div class="status-dot ${c.status}"></div>
+      <div style="flex:1;min-width:0">
+        <strong>${c.desc}</strong>
+        <div style="font-size:.82rem;color:var(--slate-light)">${[c.prov,c.date,c.num?'#'+c.num:''].filter(Boolean).join(' · ')}</div>
+        <div style="font-size:.83rem;font-weight:600;color:${c.status==='approved'?'var(--sage)':c.status==='denied'?'var(--rose)':'var(--amber)'}">${labels[c.status]||c.status}</div>
+      </div>
+      <div style="text-align:right;flex-shrink:0">
+        ${c.amt?`<div style="font-weight:700">$${parseFloat(c.amt).toFixed(2)}</div>`:''}
+        ${c.paid?`<div style="font-size:.8rem;color:var(--sage)">Paid: $${parseFloat(c.paid).toFixed(2)}</div>`:''}
+      </div>
+      ${caregiverMode?'':`
+        <div style="display:flex;gap:6px;flex-shrink:0;margin-left:8px">
+          <button onclick="editClaim(${c.id})" class="btn btn-secondary btn-sm" title="Edit">✏️</button>
+          <button onclick="deleteClaim(${c.id})" class="btn btn-danger btn-sm" title="Delete">🗑️</button>
+        </div>`}
+    </div>`).join('');
 }
-function deleteClaim(id){D.claims=D.claims.filter(c=>c.id!==id);save();renderAll();}
+
+function deleteClaim(id){
+  if(!confirm('Delete this claim? This cannot be undone.')) return;
+  D.claims=D.claims.filter(c=>c.id!==id);
+  save(); renderAll();
+  toast('Claim deleted','var(--slate-mid)');
+}
 
 // Documents
 let pendingPhoto='';
@@ -3641,21 +3934,89 @@ async function checkScam(){
 
 // Family & Contacts
 const famAvatars=['👩','👨','👴','👵','🧑','👱'];
-function addFamily(){const name=document.getElementById('f-name').value.trim();if(!name){toast('Please enter a name');return;}const al={all:['Medications','Appointments','Health Log'],appts:['Appointments'],emergency:['Emergency Contact']};const access=document.getElementById('f-access').value;D.family.push({id:Date.now(),name,rel:document.getElementById('f-rel').value,phone:document.getElementById('f-phone').value,email:document.getElementById('f-email').value,access,labels:al[access]});save();closeModal('family-modal');clearInputs(['f-name','f-phone','f-email']);renderAll();toast('✅ Added!','var(--sage)');}
+// ── Family Loop — full edit/save/delete system ─────────────
+let _editFamilyId = null;
+const _accessLabels = {
+  all:       ['Medications','Appointments','Health Log'],
+  appts:     ['Appointments'],
+  emergency: ['Emergency Contact']
+};
+
+function openAddFamily(){
+  _editFamilyId = null;
+  const title = document.getElementById('family-modal-title');
+  const btn   = document.getElementById('family-save-btn');
+  if(title) title.textContent = '👨‍👩‍👧 Add Family Member';
+  if(btn)   btn.textContent   = 'Add Member';
+  clearInputs(['f-name','f-phone','f-email']);
+  document.getElementById('f-rel').value    = 'Son';
+  document.getElementById('f-access').value = 'all';
+  openModal('family-modal');
+}
+
+function editFamily(id){
+  const f = D.family.find(x => x.id === id);
+  if(!f) return;
+  _editFamilyId = id;
+  const title = document.getElementById('family-modal-title');
+  const btn   = document.getElementById('family-save-btn');
+  if(title) title.textContent = '✏️ Edit Family Member';
+  if(btn)   btn.textContent   = 'Save Changes';
+  const set = (elId, val) => { const el=document.getElementById(elId); if(el) el.value = val||''; };
+  set('f-name',   f.name);
+  set('f-rel',    f.rel);
+  set('f-phone',  f.phone);
+  set('f-email',  f.email);
+  set('f-access', f.access);
+  openModal('family-modal');
+}
+
+function saveFamily(){
+  const name = document.getElementById('f-name')?.value.trim();
+  if(!name){ toast('Please enter a name'); return; }
+  const access = document.getElementById('f-access')?.value || 'all';
+  const fields = {
+    name,
+    rel:    document.getElementById('f-rel')?.value    || '',
+    phone:  document.getElementById('f-phone')?.value  || '',
+    email:  document.getElementById('f-email')?.value  || '',
+    access,
+    labels: _accessLabels[access] || _accessLabels.all
+  };
+  if(_editFamilyId !== null){
+    const idx = D.family.findIndex(x => x.id === _editFamilyId);
+    if(idx !== -1) D.family[idx] = { ...D.family[idx], ...fields };
+    toast('✅ Family member updated!', 'var(--sage)');
+  } else {
+    D.family.push({ id: Date.now(), ...fields });
+    toast('✅ Added to Family Loop!', 'var(--sage)');
+  }
+  _editFamilyId = null;
+  save(); closeModal('family-modal');
+  clearInputs(['f-name','f-phone','f-email']);
+  renderAll();
+}
+
 function renderFamily(){
-  const el=document.getElementById('family-list-area');
-  if(!D.family.length){el.innerHTML='<div class="empty"><div class="ei">👨‍👩‍👧</div><p>Add family members to the loop.</p></div>';return;}
-  el.innerHTML=D.family.map((f,i)=>`
+  const el = document.getElementById('family-list-area');
+  if(!D.family.length){
+    el.innerHTML = '<div class="empty"><div class="ei">👨‍👩‍👧</div><p>Add family members or caregivers to stay in the loop.</p></div>';
+    return;
+  }
+  const bgColors = ['DBEAFE','D1FAE5','FEF3C7','EDE9FE','FFE4E6'];
+  el.innerHTML = D.family.map((f,i) => `
     <div class="family-card">
-      <div style="width:56px;height:56px;border-radius:50%;background:#${['DBEAFE','D1FAE5','FEF3C7','EDE9FE','FFE4E6'][i%5]};display:flex;align-items:center;justify-content:center;font-size:1.6rem;flex-shrink:0">${famAvatars[i%famAvatars.length]}</div>
-      <div style="flex:1">
+      <div style="width:56px;height:56px;border-radius:50%;background:#${bgColors[i%bgColors.length]};display:flex;align-items:center;justify-content:center;font-size:1.6rem;flex-shrink:0">${famAvatars[i%famAvatars.length]}</div>
+      <div style="flex:1;min-width:0">
         <strong>${f.name}</strong>
-        <div style="font-size:.85rem;color:var(--slate-light)">${f.rel}${f.phone?' · '+f.phone:''}</div>
-        <div style="margin-top:7px;display:flex;gap:6px;flex-wrap:wrap">${f.labels.map(l=>`<span class="access-pill">👁 ${l}</span>`).join('')}</div>
+        <div style="font-size:.85rem;color:var(--slate-light)">${f.rel||''}${f.phone?' · '+f.phone:''}</div>
+        ${f.email ? `<div style="font-size:.8rem;color:var(--slate-light)">${f.email}</div>` : ''}
+        <div style="margin-top:7px;display:flex;gap:6px;flex-wrap:wrap">${(f.labels||[]).map(l=>`<span class="access-pill">👁 ${l}</span>`).join('')}</div>
       </div>
-      <div style="display:flex;flex-direction:column;gap:7px;align-items:flex-end">
-        ${f.phone?`<button class="call-btn btn-sm" onclick="toast('📞 Calling ${f.name}...')">📞 Call</button>`:''}
-        <button class="btn btn-danger btn-sm" onclick="removeFamily(${f.id})" style="white-space:nowrap">✕ Remove</button>
+      <div style="display:flex;flex-direction:column;gap:7px;align-items:flex-end;flex-shrink:0">
+        ${f.phone ? `<button class="call-btn btn-sm" onclick="toast('📞 Calling ${f.name}...','var(--teal)')">📞 Call</button>` : ''}
+        <button class="btn btn-secondary btn-sm" onclick="editFamily(${f.id})" style="white-space:nowrap">✏️ Edit</button>
+        <button class="btn btn-danger btn-sm" onclick="removeFamily(${f.id})" style="white-space:nowrap">🗑️ Remove</button>
       </div>
     </div>`).join('');
 }
