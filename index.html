@@ -1630,7 +1630,7 @@ body.high-contrast .nav-item.active{outline:2px solid var(--teal)}
   <!-- Version + Privacy -->
   <div style="margin-top:28px;padding:20px 0;border-top:1px solid var(--border);text-align:center">
     <div style="font-size:.82rem;font-weight:700;color:var(--slate-light);margin-bottom:6px">
-      Tended Health &nbsp;·&nbsp; Version 1.0.0
+      Tended Health &nbsp;·&nbsp; Version 1.0.7
     </div>
     <div id="unlock-status-display" style="margin-bottom:14px;font-size:.82rem"></div>
     <div style="background:var(--cream);border:1.5px solid var(--border);border-radius:14px;padding:18px 20px;text-align:left;max-width:560px;margin:0 auto">
@@ -3304,6 +3304,7 @@ function printHealthSummary(){
 
 // AI Trend Analysis
 async function runTrendAnalysis(){
+  if(!checkUnlock())return;
   if(D.health.length<3){toast('Need at least 3 health log entries','var(--amber)');return;}
   const loading=document.getElementById('trend-loading'),results=document.getElementById('trend-results');
   loading.style.display='block';results.innerHTML='';
@@ -3319,7 +3320,7 @@ async function runTrendAnalysis(){
     loading.style.display='none';
     const sections=text.split(/\n## /).filter(Boolean);
     const borders=['var(--teal-mid)','#C7D2FE','#FCD34D','#86EFAC','var(--teal-mid)'];
-    results.innerHTML=sections.map((sec,i)=>{const lines=sec.split('\n');const title=lines[0].replace(/^## /,'');const body=lines.slice(1).join('\n').trim();return`<div class="card" style="margin-bottom:16px;border-left:4px solid ${borders[i%borders.length]}"><div class="card-title" style="font-size:1rem">${title}</div><div style="font-size:.92rem;line-height:1.8;color:var(--slate-mid);white-space:pre-wrap">${body}</div></div>`;}).join('')+`<div style="text-align:center;margin-top:8px"><button class="btn btn-secondary" onclick="runTrendAnalysis()">🔄 Re-analyze</button><p style="font-size:.78rem;color:var(--slate-light);margin-top:10px">Based on your last ${Math.min(D.health.length,14)} health entries. Always consult your doctor for medical advice.</p></div>`;
+    results.innerHTML=sections.map((sec,i)=>{const lines=sec.split('\n');const title=lines[0].replace(/^## /,'');const body=lines.slice(1).join('\n').trim();return`<div class="card" style="margin-bottom:16px;border-left:4px solid ${borders[i%borders.length]}"><div class="card-title" style="font-size:1rem">${title}</div><div style="font-size:.92rem;line-height:1.8;color:var(--slate-mid);white-space:pre-wrap">${body}</div></div>`;}).join('')+`<div style="text-align:center;margin-top:8px"><button class="btn btn-secondary" onclick="runTrendAnalysis()">🔄 Re-analyze</button><p style="font-size:.78rem;color:var(--slate-light);margin-top:10px">Based on your last ${Math.min(D.health.length,14)} health entries. Always consult your doctor for medical advice.</p></div>`;incrementAction();
   }catch(e){loading.style.display='none';if(e.message!=='NO_KEY'&&e.message!=='INVALID_KEY')results.innerHTML='<div class="card" style="color:var(--rose)">Unable to connect. Please check your API key in Settings.</div>';}
 }
 
@@ -3806,6 +3807,7 @@ function renderMyMedsList(){
 }
 
 async function checkTwoMeds(){
+  if(!checkUnlock())return;
   const a=document.getElementById('drug-a').value.trim();const b=document.getElementById('drug-b').value.trim();
   if(!a||!b){toast('Please enter both medications','var(--amber)');return;}
   const result=document.getElementById('two-med-result');
@@ -3825,11 +3827,12 @@ SYMPTOMS_TO_WATCH: [List any symptoms to watch for, or "None" if no interaction]
 
 Be warm and reassuring. If there is no significant interaction, say so clearly. Never tell them to stop taking medications — always refer to their doctor or pharmacist.`}]});
     const text=data.content?.[0]?.text||'Unable to check right now.';
-    renderInteractionResult(text,a,b,'two-med-result');
+    renderInteractionResult(text,a,b,'two-med-result');incrementAction();
   }catch(e){if(e.message!=='NO_KEY'&&e.message!=='INVALID_KEY')result.innerHTML='<div class="scam-alert red">Unable to connect. Please check your API key in Settings.</div>';}
 }
 
 async function checkMyMeds(){
+  if(!checkUnlock())return;
   if(D.meds.length<2){toast('You need at least 2 medications saved to check interactions','var(--amber)');return;}
   const result=document.getElementById('all-meds-result');
   result.innerHTML=`<div class="scam-alert" style="background:var(--indigo-pale);border-color:#C7D2FE">⚗️ Checking all ${D.meds.length} medications for interactions…<div style="margin-top:8px;height:4px;background:rgba(0,0,0,.1);border-radius:4px;overflow:hidden"><div style="height:100%;background:var(--indigo);border-radius:4px;width:0%;transition:width 2s ease" id="int-progress"></div></div></div>`;
@@ -3855,7 +3858,7 @@ Be warm and thorough. Always refer to their doctor/pharmacist for final guidance
     const p=document.getElementById('int-progress');if(p)p.style.width='100%';
     setTimeout(()=>{
       const text=data.content?.[0]?.text||'Unable to check right now.';
-      renderAllMedsResult(text);
+      renderAllMedsResult(text);incrementAction();
     },300);
   }catch(e){if(e.message!=='NO_KEY'&&e.message!=='INVALID_KEY')result.innerHTML='<div class="scam-alert red">Unable to connect. Please check your API key in Settings.</div>';}
 }
@@ -3923,12 +3926,13 @@ function renderAllMedsResult(text){
 const scamTips=[{color:'red',icon:'📞',title:'Medicare Card Scam',desc:'Medicare will NEVER call asking for your card or SSN.'},{color:'amber',icon:'🎁',title:'Gift Card Scam',desc:'No government agency ever asks for payment in gift cards.'},{color:'amber',icon:'💻',title:'Tech Support Scam',desc:'Microsoft and Apple never call about your computer.'},{color:'amber',icon:'🏦',title:'Grandchild in Trouble',desc:'Call the grandchild directly to verify before sending money.'},{color:'amber',icon:'💰',title:'Lottery Scam',desc:'Never pay a fee to collect a "prize."'}];
 function populateScamTips(){const list=document.getElementById('scam-tips-list');if(!list)return;list.innerHTML=scamTips.map(t=>`<div class="scam-alert ${t.color==='red'?'red':''}" style="margin-bottom:10px;${t.color==='amber'?'background:var(--amber-pale);border-color:#FCD34D':''}"><strong>${t.icon} ${t.title}</strong><div style="font-size:.85rem;margin-top:4px">${t.desc}</div></div>`).join('');}
 async function checkScam(){
+  if(!checkUnlock())return;
   const input=document.getElementById('scam-input').value.trim();if(!input){toast('Please describe the call or text');return;}
   const result=document.getElementById('scam-result');result.innerHTML='<div class="scam-alert" style="background:var(--indigo-pale);border-color:#C7D2FE">🤖 Analyzing…</div>';
   try{const data=await apiFetch({model:'claude-sonnet-4-20250514',max_tokens:600,messages:[{role:'user',content:`Scam detection for seniors. Analyze:\n\n"${input}"\n\nRISK: [LOW/MEDIUM/HIGH]\nVERDICT: [1 sentence]\nRED FLAGS: [bullets or "None"]\nADVICE: [2-3 sentences]`}]});
     const text=data.content?.[0]?.text||'Unable to analyze.';const risk=text.includes('RISK: HIGH')?'high':text.includes('RISK: MEDIUM')?'medium':'low';
     const cols={high:['var(--rose-pale)','#FCA5A5','🚨 HIGH RISK'],medium:['var(--amber-pale)','#FCD34D','⚠️ POSSIBLE SCAM'],low:['var(--sage-pale)','#86EFAC','✅ LIKELY SAFE']};
-    const[bg,border,label]=cols[risk];result.innerHTML=`<div class="scam-alert" style="background:${bg};border-color:${border}"><div style="font-size:1.1rem;font-weight:700;margin-bottom:8px">${label}</div><div style="font-size:.9rem;line-height:1.7;white-space:pre-wrap">${text.replace(/RISK:.*\n/,'')}</div></div>`;
+    const[bg,border,label]=cols[risk];result.innerHTML=`<div class="scam-alert" style="background:${bg};border-color:${border}"><div style="font-size:1.1rem;font-weight:700;margin-bottom:8px">${label}</div><div style="font-size:.9rem;line-height:1.7;white-space:pre-wrap">${text.replace(/RISK:.*\n/,'')}</div></div>`;incrementAction();
   }catch(e){if(e.message!=='NO_KEY'&&e.message!=='INVALID_KEY')result.innerHTML='<div class="scam-alert red">Unable to connect. If something feels wrong, hang up and call a trusted family member.</div>';}
 }
 
@@ -4233,22 +4237,23 @@ function showImportStatus(type, msg){
 // AI Chat
 let chatHistory=[];
 async function sendChat(){
-  const input=document.getElementById('chat-input');const msg=input.value.trim();if(!msg)return;
+  const input=document.getElementById('chat-input');const msg=input.value.trim();if(!msg)return;if(!checkUnlock())return;
   input.value='';appendMsg(msg,'user');
   const ctx=`Medications: ${D.meds.map(m=>m.name+(m.dose?' '+m.dose:'')).join(', ')||'none'}\nAppointments: ${D.appts.slice(0,3).map(a=>a.name+' on '+a.date).join(', ')||'none'}\nDoctor: ${D.settings.doc||'not specified'}`;
   const loadEl=appendMsg('','ai',true);chatHistory.push({role:'user',content:msg});
   try{const data=await apiFetch({model:'claude-sonnet-4-20250514',max_tokens:1000,system:`You are a warm, patient health assistant for a senior adult. Help with medications, appointments, insurance, scam protection, and health questions.\n\n${ctx}\n\nBe clear, simple, safety-conscious. Keep responses to 2-4 paragraphs.`,messages:chatHistory});
     const reply=data.content?.[0]?.text||"I'm having trouble connecting. Please try again.";
-    loadEl.remove();appendMsg(reply,'ai');chatHistory.push({role:'assistant',content:reply});if(chatHistory.length>20)chatHistory=chatHistory.slice(-20);
+    loadEl.remove();appendMsg(reply,'ai');chatHistory.push({role:'assistant',content:reply});if(chatHistory.length>20)chatHistory=chatHistory.slice(-20);incrementAction();
   }catch(e){loadEl.remove();if(e.message!=='NO_KEY'&&e.message!=='INVALID_KEY')appendMsg("I'm having trouble connecting. Please check your API key in Settings.","ai");}
 }
 function appendMsg(text,role,loading=false){const msgs=document.getElementById('chat-messages');const div=document.createElement('div');div.className='msg '+role+(loading?' loading':'');if(role==='ai'&&!loading)div.innerHTML=`<div class="ai-label">🤖 Tended Health AI</div>${text.replace(/\n/g,'<br>')}`;else if(loading)div.innerHTML='<div class="dots"><span></span><span></span><span></span></div>';else div.textContent=text;msgs.appendChild(div);msgs.scrollTop=msgs.scrollHeight;return div;}
 function quickPrompt(btn){document.getElementById('chat-input').value=btn.textContent.trim();sendChat();}
 async function generateDoctorQuestions(){
+  if(!checkUnlock())return;
   const el=document.getElementById('doctor-questions');const btn=event.target;btn.disabled=true;btn.textContent='🤖 Generating…';el.innerHTML='<div style="color:var(--slate-light);font-size:.88rem">Analyzing…</div>';
   const next=D.appts.find(a=>new Date(a.date+'T00:00:00')>=new Date());
   const ctx=`Meds: ${D.meds.map(m=>m.name+' '+m.dose).join(', ')||'none'}\nSymptoms: ${D.symptoms.slice(0,5).map(s=>s.symptoms.join(', ')).join('; ')||'none'}\nVitals: ${D.health[0]?`BP ${D.health[0].bp}, HR ${D.health[0].hr}`:'none'}\nNext appt: ${next?next.name:'-'}`;
-  try{const data=await apiFetch({model:'claude-sonnet-4-20250514',max_tokens:600,messages:[{role:'user',content:`Generate 6-8 smart doctor questions for this senior patient. Numbered list, plain language.\n\n${ctx}`}]});const text=data.content?.[0]?.text||'Unable to generate.';el.innerHTML=`<div style="background:var(--indigo-pale);border:1.5px solid #C7D2FE;border-radius:10px;padding:14px;font-size:.88rem;line-height:1.9;white-space:pre-wrap">${text}</div><button class="btn btn-secondary btn-sm no-print" style="margin-top:10px" onclick="window.print()">🖨️ Print</button>`;}catch(e){if(e.message!=='NO_KEY'&&e.message!=='INVALID_KEY')el.innerHTML='<div style="color:var(--rose);font-size:.88rem">Unable to connect.</div>';}
+  try{const data=await apiFetch({model:'claude-sonnet-4-20250514',max_tokens:600,messages:[{role:'user',content:`Generate 6-8 smart doctor questions for this senior patient. Numbered list, plain language.\n\n${ctx}`}]});const text=data.content?.[0]?.text||'Unable to generate.';el.innerHTML=`<div style="background:var(--indigo-pale);border:1.5px solid #C7D2FE;border-radius:10px;padding:14px;font-size:.88rem;line-height:1.9;white-space:pre-wrap">${text}</div><button class="btn btn-secondary btn-sm no-print" style="margin-top:10px" onclick="window.print()">🖨️ Print</button>`;incrementAction();}catch(e){if(e.message!=='NO_KEY'&&e.message!=='INVALID_KEY')el.innerHTML='<div style="color:var(--rose);font-size:.88rem">Unable to connect.</div>';}
   btn.disabled=false;btn.textContent='🤖 Generate Questions';
 }
 
@@ -4941,6 +4946,7 @@ function scanClose() {
   document.getElementById('scan-input').value = '';
 }
 async function scanPhoto(input) {
+  if(!checkUnlock()){input.value='';return;}
   const file = input.files[0]; if (!file) return;
   const img = document.getElementById('scan-img');
   const status = document.getElementById('scan-status');
@@ -4962,7 +4968,7 @@ async function scanPhoto(input) {
       document.getElementById('scan-freq').value = (txt.match(/FREQ:\s*(.+)/i)?.[1]?.trim()||'Once daily').replace(/Unknown/i,'Once daily');
       document.getElementById('scan-notes').value = (txt.match(/INSTR:\s*(.+)/i)?.[1]?.trim()||'').replace(/Unknown|none/i,'');
       status.style.display = 'none';
-      document.getElementById('scan-result').style.display = 'block';
+      document.getElementById('scan-result').style.display = 'block';incrementAction();
     } catch(err) {
       status.innerHTML = '<span style="color:var(--rose)">❌ Could not read label. Try better lighting.</span>';
     }
@@ -5984,7 +5990,7 @@ const ACTION_KEY    = 'tendedActionCount';
 const TRIAL_DAYS    = 7;
 const TRIAL_ACTIONS = 30;
 const PLAY_PRODUCT  = 'tended_unlock';        // Must match Play Console product ID
-const PLAY_STORE_URL= 'https://play.google.com/store/apps/details?id=io.github.flougher.tended';
+const PLAY_STORE_URL= 'https://play.google.com/store/apps/details?id=app.tended.health';
 
 // ── 1. PREMIUM STATE ──────────────────────────────────────────
 // isUnlocked() is the single source of truth throughout the app.
@@ -6031,6 +6037,8 @@ function activateUnlock(source){
   localStorage.setItem(UNLOCK_KEY, 'true');
   localStorage.setItem(UNLOCK_SRC, source || 'unknown');
   hideUnlockPrompt();
+  // Bridge to Android native if available (WebView mode)
+  try{if(window.TendedBridge&&window.TendedBridge.setPremium)window.TendedBridge.setPremium(true);}catch(e){}
   // Clean up URL param so it doesn't re-trigger on reload
   if(window.history && window.history.replaceState){
     const url = new URL(window.location.href);
@@ -6227,6 +6235,7 @@ function init(){
   if(!localStorage.getItem(PIN_SET)){document.getElementById('pin-skip-btn').style.display='block';}
   checkRefillAlerts();checkApptAlerts();renderNotifBadge();checkBpAlert();
   renderTrialBanner();
+  if('serviceWorker' in navigator){navigator.serviceWorker.register('sw.js').catch(()=>{});}
   syncDarkBtn();
   // Show tour for users who've onboarded but haven't seen the tour
   if(localStorage.getItem(OB_DONE_KEY) && !localStorage.getItem(TOUR_KEY)) {

@@ -1,8 +1,8 @@
 const CACHE_NAME = 'tended-v1';
 const ASSETS = [
-  '/Tended/',
-  '/Tended/index.html',
-  '/Tended/manifest.json'
+  '/tended/',
+  '/tended/index.html',
+  '/tended/manifest.json'
 ];
 
 // Install — cache core assets
@@ -48,7 +48,7 @@ self.addEventListener('fetch', event => {
           return response;
         })
         .catch(() => {
-          return caches.match('/Tended/index.html');
+          return caches.match('/tended/index.html');
         });
     })
   );
