@@ -1924,6 +1924,173 @@ body.high-contrast small,body.high-contrast .small-text{color:#333!important}
 <div class="toast" id="toast"></div>
 
 <script>
+
+// ════════════════════════════════════════════════════════════════
+// INDEXEDDB PERSISTENCE LAYER — BUG-002 & BUG-004 MITIGATION
+// IndexedDB survives Chrome cache clears that wipe localStorage
+// Data is written to BOTH stores — IndexedDB is the primary backup
+// ════════════════════════════════════════════════════════════════
+
+const IDB_NAME    = 'TendedHealthDB';
+const IDB_VERSION = 1;
+const IDB_STORE   = 'appData';
+const IDB_KEY     = 'tendedV4';
+const IDB_TRIAL   = 'tendedTrialData';
+
+let _idb = null;
+
+function openIDB(){
+  return new Promise((resolve, reject) => {
+    if(_idb){ resolve(_idb); return; }
+    const req = indexedDB.open(IDB_NAME, IDB_VERSION);
+    req.onupgradeneeded = e => {
+      const db = e.target.result;
+      if(!db.objectStoreNames.contains(IDB_STORE)){
+        db.createObjectStore(IDB_STORE);
+      }
+    };
+    req.onsuccess  = e => { _idb = e.target.result; resolve(_idb); };
+    req.onerror    = e => { reject(e.target.error); };
+  });
+}
+
+async function idbSet(key, value){
+  try {
+    const db = await openIDB();
+    return new Promise((resolve, reject) => {
+      const tx = db.transaction(IDB_STORE, 'readwrite');
+      tx.objectStore(IDB_STORE).put(value, key);
+      tx.oncomplete = () => resolve(true);
+      tx.onerror    = e => reject(e.target.error);
+    });
+  } catch(e){ return false; }
+}
+
+async function idbGet(key){
+  try {
+    const db = await openIDB();
+    return new Promise((resolve, reject) => {
+      const tx  = db.transaction(IDB_STORE, 'readonly');
+      const req = tx.objectStore(IDB_STORE).get(key);
+      req.onsuccess = e => resolve(e.target.result);
+      req.onerror   = e => reject(e.target.error);
+    });
+  } catch(e){ return null; }
+}
+
+async function idbDelete(key){
+  try {
+    const db = await openIDB();
+    return new Promise((resolve) => {
+      const tx = db.transaction(IDB_STORE, 'readwrite');
+      tx.objectStore(IDB_STORE).delete(key);
+      tx.oncomplete = () => resolve(true);
+    });
+  } catch(e){ return false; }
+}
+
+// Save trial state to IndexedDB so it survives Chrome cache clears
+async function saveTrialToIDB(){
+  const trialData = {
+    trialStart:   localStorage.getItem('tendedTrialStart'),
+    actionCount:  localStorage.getItem('tendedActionCount'),
+    unlocked:     localStorage.getItem('tendedUnlocked'),
+    unlockSource: localStorage.getItem('tendedUnlockSource'),
+    savedAt:      Date.now()
+  };
+  await idbSet(IDB_TRIAL, JSON.stringify(trialData));
+}
+
+// Restore trial state from IndexedDB if localStorage was cleared
+async function restoreTrialFromIDB(){
+  const stored = await idbGet(IDB_TRIAL);
+  if(!stored) return;
+  try {
+    const data = JSON.parse(stored);
+    // Only restore if localStorage trial is missing (was cleared)
+    if(!localStorage.getItem('tendedTrialStart') && data.trialStart){
+      localStorage.setItem('tendedTrialStart',   data.trialStart);
+      localStorage.setItem('tendedActionCount',  data.actionCount || '0');
+      if(data.unlocked)     localStorage.setItem('tendedUnlocked',     data.unlocked);
+      if(data.unlockSource) localStorage.setItem('tendedUnlockSource', data.unlockSource);
+      console.log('✅ Tended: Trial state restored from IndexedDB');
+    }
+  } catch(e){}
+}
+
+// Load app data — IndexedDB first, localStorage fallback
+async function loadFromIDB(){
+  try {
+    const idbData = await idbGet(IDB_KEY);
+    if(idbData){
+      const parsed = JSON.parse(idbData);
+      // Use IDB data if localStorage is empty or IDB is newer
+      const lsData = localStorage.getItem('tendedV4');
+      if(!lsData){
+        D = Object.assign(D, parsed);
+        // Restore to localStorage as well
+        localStorage.setItem('tendedV4', idbData);
+        console.log('✅ Tended: Data restored from IndexedDB after localStorage clear');
+        showDataRestoredBanner();
+        return true;
+      }
+    }
+  } catch(e){}
+  return false;
+}
+
+function showDataRestoredBanner(){
+  // Show a one-time banner telling user their data was recovered
+  setTimeout(() => {
+    const banner = document.createElement('div');
+    banner.style.cssText = 'position:fixed;top:0;left:0;right:0;background:#0F766E;color:white;padding:12px 16px;text-align:center;font-size:.88rem;font-weight:600;z-index:9999;display:flex;align-items:center;justify-content:center;gap:10px';
+    banner.innerHTML = '✅ Your health data has been automatically restored from backup. &nbsp;<button onclick="this.parentElement.remove()" style="background:rgba(255,255,255,.2);border:none;color:white;border-radius:6px;padding:3px 10px;cursor:pointer;font-weight:700">OK</button>';
+    document.body.prepend(banner);
+    setTimeout(() => banner.remove(), 8000);
+  }, 1500);
+}
+
+// ── AUTO-EXPORT REMINDER ─────────────────────────────────────
+const LAST_EXPORT_KEY   = 'tendedLastExport';
+const EXPORT_REMIND_KEY = 'tendedExportDismissed';
+const EXPORT_INTERVAL   = 7; // days
+
+function checkExportReminder(){
+  if(localStorage.getItem(UNLOCK_KEY) !== 'true') return; // Only for paying users
+  const lastExport    = parseInt(localStorage.getItem(LAST_EXPORT_KEY) || '0');
+  const lastDismissed = parseInt(localStorage.getItem(EXPORT_REMIND_KEY) || '0');
+  const now           = Date.now();
+  const daysSince     = (now - Math.max(lastExport, lastDismissed)) / (1000*60*60*24);
+
+  if(daysSince >= EXPORT_INTERVAL){
+    showExportReminder();
+  }
+}
+
+function showExportReminder(){
+  const existing = document.getElementById('export-reminder-banner');
+  if(existing) return;
+
+  const banner = document.createElement('div');
+  banner.id = 'export-reminder-banner';
+  banner.style.cssText = 'background:#EFF6FF;border-bottom:1.5px solid #BFDBFE;padding:10px 16px;display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap;flex-shrink:0;font-size:.82rem;color:#1D4ED8;font-weight:500';
+  banner.innerHTML = `
+    <span>💾 <strong>Weekly backup reminder</strong> — Export your health data to keep it safe.</span>
+    <div style="display:flex;gap:8px;flex-shrink:0">
+      <button onclick="exportData();localStorage.setItem('${LAST_EXPORT_KEY}',Date.now().toString());document.getElementById('export-reminder-banner').remove();"
+        style="background:#1D4ED8;color:white;border:none;border-radius:6px;padding:5px 12px;font-size:.78rem;font-weight:700;cursor:pointer;font-family:inherit">
+        Export Now
+      </button>
+      <button onclick="localStorage.setItem('${EXPORT_REMIND_KEY}',Date.now().toString());document.getElementById('export-reminder-banner').remove();"
+        style="background:none;border:1px solid #BFDBFE;color:#1D4ED8;border-radius:6px;padding:5px 10px;font-size:.78rem;cursor:pointer;font-family:inherit">
+        Remind Later
+      </button>
+    </div>`;
+
+  const shell = document.querySelector('.shell');
+  if(shell) shell.insertBefore(banner, shell.firstChild);
+}
+
 const STORE='tendedV4', SALT_KEY='tendedSalt', ENC_KEY='tendedEncKey';
 let D={meds:[],appts:[],health:[],symptoms:[],claims:[],docs:[],family:[],contacts:[],settings:{},medChecks:{},notifications:[],prepChecks:{},checkins:[]};
 let _cryptoKey=null, _encReady=false;
@@ -1965,12 +2132,17 @@ async function initEncryption(pin){
   _encReady=true;
 }
 async function saveEncrypted(){
-  // Always save plaintext first — this is the reliable source on reload
-  try{ localStorage.setItem(STORE, JSON.stringify(D)); } catch(e){}
-  // Also save encrypted copy if PIN is active (bonus security layer)
+  const dataStr = JSON.stringify(D);
+  // Always save plaintext to localStorage first
+  try{ localStorage.setItem(STORE, dataStr); } catch(e){}
+  // BUG-004: ALSO save to IndexedDB — survives Chrome cache clears
+  idbSet(IDB_KEY, dataStr).catch(()=>{});
+  // Save trial state to IndexedDB too (BUG-002)
+  saveTrialToIDB().catch(()=>{});
+  // Also save encrypted copy if PIN is active
   if(_encReady && _cryptoKey){
     try{
-      const enc = await encryptData(JSON.stringify(D), _cryptoKey);
+      const enc = await encryptData(dataStr, _cryptoKey);
       localStorage.setItem(STORE+'_enc', enc);
     }catch(e){}
   }
@@ -2184,6 +2356,9 @@ function pinForgot(){
   if(!confirm('This will delete ALL your health data and remove the PIN. Are you sure?')) return;
   if(!confirm('Last chance — this cannot be undone. Delete everything?')) return;
   // Clear all app keys
+  // Also clear IndexedDB on explicit data clear
+  idbDelete(IDB_KEY).catch(()=>{});
+  idbDelete(IDB_TRIAL).catch(()=>{});
   ['tendedV4','tendedV4_enc','tendedSalt','tendedPin','tendedPinSet','tendedPinHash',
    'tendedOnboarded','tendedProfiles','tendedActiveProfile','tendedBioId','tendedBioOn',
    'tendedApiKey','tendedCgPin','lifeAdminV3_cgShare','_authToken','_authRefresh','_authExpiresAt',
@@ -4398,6 +4573,8 @@ function exportData(){
   if(pinSet && !confirm('⚠️ Privacy Notice\n\nYour backup file will contain all health data in plain text. Keep it private and store it securely — do not share it.\n\nContinue with export?')){
     return;
   }
+  // Track last export date for reminder system
+  localStorage.setItem(LAST_EXPORT_KEY, Date.now().toString());
   const exportPayload = {
     _meta: {
       version: 'tended-v1',
@@ -4420,7 +4597,15 @@ function exportData(){
   a.click();
   toast('✅ Backup saved! Keep this file somewhere safe.', 'var(--sage)');
 }
-function clearAllData(){if(!confirm('Delete ALL data?'))return;if(!confirm('Really? Cannot be undone.'))return;localStorage.clear();location.reload();}
+function clearAllData(){
+  if(!confirm('Delete ALL data?')) return;
+  if(!confirm('Really? Cannot be undone.')) return;
+  // Clear IndexedDB as well (BUG-004 fix)
+  idbDelete(IDB_KEY).catch(()=>{});
+  idbDelete(IDB_TRIAL).catch(()=>{});
+  localStorage.clear();
+  location.reload();
+}
 
 function importData(input){
   const file = input.files[0];
@@ -6495,6 +6680,17 @@ function init(){
       document.body.style.filter = '';
     }
   });
+  // BUG-002 & BUG-004: Restore from IndexedDB if localStorage was cleared
+  restoreTrialFromIDB().catch(()=>{});
+  loadFromIDB().then(() => {
+    // Seed initial save to IDB if data exists from localStorage
+    if(D.meds.length || D.appts.length || D.health.length){
+      idbSet(IDB_KEY, JSON.stringify(D)).catch(()=>{});
+      saveTrialToIDB().catch(()=>{});
+    }
+  }).catch(()=>{});
+  // Auto-export reminder (weekly)
+  setTimeout(checkExportReminder, 3000);
   initPin();loadProfiles();
   // Set up dirty tracking on all modals
   ['med-modal','appt-modal','health-modal','symptom-modal','contact-modal'].forEach(id=>{
