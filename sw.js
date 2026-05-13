@@ -1,4 +1,4 @@
-const CACHE_NAME = 'tended-v1';
+const CACHE_NAME = 'tended-v1.0.8';
 const ASSETS = [
   '/tended/',
   '/tended/index.html',
