@@ -9,7 +9,7 @@
 <meta name="apple-mobile-web-app-title" content="Tended Health">
 <meta name="description" content="Tended — Your private health companion. Medications, appointments, vitals and more.">
 <link rel="apple-touch-icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 180 180'%3E%3Crect width='180' height='180' rx='40' fill='%230F766E'/%3E%3Ctext x='90' y='120' font-size='96' text-anchor='middle'%3E🏡%3C/text%3E%3C/svg%3E">
-<link rel="manifest" href="/Tended/manifest.json">
+<link rel="manifest" href="/tended/manifest.json">
 <title>Tended Health</title>
 <!-- BUG-023: Font loading with fallback for slow connections -->
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -1989,35 +1989,6 @@ async function idbDelete(key){
   } catch(e){ return false; }
 }
 
-// Save trial state to IndexedDB so it survives Chrome cache clears
-async function saveTrialToIDB(){
-  const trialData = {
-    trialStart:   localStorage.getItem('tendedTrialStart'),
-    actionCount:  localStorage.getItem('tendedActionCount'),
-    unlocked:     localStorage.getItem('tendedUnlocked'),
-    unlockSource: localStorage.getItem('tendedUnlockSource'),
-    savedAt:      Date.now()
-  };
-  await idbSet(IDB_TRIAL, JSON.stringify(trialData));
-}
-
-// Restore trial state from IndexedDB if localStorage was cleared
-async function restoreTrialFromIDB(){
-  const stored = await idbGet(IDB_TRIAL);
-  if(!stored) return;
-  try {
-    const data = JSON.parse(stored);
-    // Only restore if localStorage trial is missing (was cleared)
-    if(!localStorage.getItem('tendedTrialStart') && data.trialStart){
-      localStorage.setItem('tendedTrialStart',   data.trialStart);
-      localStorage.setItem('tendedActionCount',  data.actionCount || '0');
-      if(data.unlocked)     localStorage.setItem('tendedUnlocked',     data.unlocked);
-      if(data.unlockSource) localStorage.setItem('tendedUnlockSource', data.unlockSource);
-      console.log('✅ Tended: Trial state restored from IndexedDB');
-    }
-  } catch(e){}
-}
-
 // Load app data — IndexedDB first, localStorage fallback
 async function loadFromIDB(){
   try {
@@ -2137,8 +2108,6 @@ async function saveEncrypted(){
   try{ localStorage.setItem(STORE, dataStr); } catch(e){}
   // BUG-004: ALSO save to IndexedDB — survives Chrome cache clears
   idbSet(IDB_KEY, dataStr).catch(()=>{});
-  // Save trial state to IndexedDB too (BUG-002)
-  saveTrialToIDB().catch(()=>{});
   // Also save encrypted copy if PIN is active
   if(_encReady && _cryptoKey){
     try{
@@ -6452,7 +6421,7 @@ const ACTION_KEY    = 'tendedActionCount';
 const TRIAL_DAYS    = 7;
 const TRIAL_ACTIONS = 30;
 const PLAY_PRODUCT  = 'tended_unlock';        // Must match Play Console product ID
-const PLAY_STORE_URL= 'https://play.google.com/store/apps/details?id=io.github.flougher.tended';
+const PLAY_STORE_URL= 'https://play.google.com/store/apps/details?id=app.tended.health';
 
 // ── 1. PREMIUM STATE ──────────────────────────────────────────
 // isUnlocked() is the single source of truth throughout the app.
@@ -6481,14 +6450,45 @@ function _checkURLParam(){
   return false;
 }
 
+// BUG-002: Resolve trial start from the most durable source available, in order:
+//   1) WebView mode: native JS bridge (TendedBridge.getTrialStart) — SharedPreferences
+//   2) TWA mode: ?trialStart=<millis> URL param passed by MainActivity on every launch
+//   3) Plain web / fallback: localStorage
+// Both (1) and (2) survive a Chrome data clear because the native app re-supplies
+// the value on every launch. (3) does not — that's what BUG-002 reports.
+function _getTrialStart(){
+  // (1) WebView bridge
+  try {
+    const native = window.TendedBridge && typeof window.TendedBridge.getTrialStart === 'function'
+      ? window.TendedBridge.getTrialStart() : 0;
+    if(native && native > 0){
+      localStorage.setItem(TRIAL_KEY, String(native));
+      return native;
+    }
+  } catch(e){}
+  // (2) TWA URL param — populated by MainActivity.getLaunchingUrl on every launch
+  try {
+    const params = new URLSearchParams(window.location.search);
+    const fromUrl = parseInt(params.get('trialStart') || '0');
+    if(fromUrl > 0){
+      localStorage.setItem(TRIAL_KEY, String(fromUrl));
+      return fromUrl;
+    }
+  } catch(e){}
+  // (3) localStorage fallback
+  const stored = localStorage.getItem(TRIAL_KEY);
+  return stored ? parseInt(stored) : 0;
+}
+
 function _trialActive(){
-  const start = localStorage.getItem(TRIAL_KEY);
+  let start = _getTrialStart();
   if(!start){
-    localStorage.setItem(TRIAL_KEY, Date.now().toString());
+    start = Date.now();
+    localStorage.setItem(TRIAL_KEY, String(start));
     localStorage.setItem(ACTION_KEY, '0');
     return true;
   }
-  const days    = (Date.now() - parseInt(start)) / (1000*60*60*24);
+  const days    = (Date.now() - start) / (1000*60*60*24);
   const actions = parseInt(localStorage.getItem(ACTION_KEY) || '0');
   return days <= TRIAL_DAYS && actions <= TRIAL_ACTIONS;
 }
@@ -6499,6 +6499,9 @@ function activateUnlock(source){
   localStorage.setItem(UNLOCK_KEY, 'true');
   localStorage.setItem(UNLOCK_SRC, source || 'unknown');
   hideUnlockPrompt();
+  // Bridge to Android native if available (WebView mode) so SharedPreferences
+  // reflects premium state across launches even if Chrome data is cleared.
+  try { window.TendedBridge && window.TendedBridge.setPremium && window.TendedBridge.setPremium(true); } catch(e){}
   // Clean up URL param so it doesn't re-trigger on reload
   if(window.history && window.history.replaceState){
     const url = new URL(window.location.href);
@@ -6591,6 +6594,21 @@ async function restorePurchase(){
   _showRestoreDialog();
 }
 
+// BUG-002: Silent auto-restore on every launch.
+// If user already purchased on this Google account, premium re-grants
+// automatically — survives Chrome data clear, reinstall, and device change.
+async function silentRestoreOnBoot(){
+  if(localStorage.getItem(UNLOCK_KEY) === 'true') return; // already unlocked locally
+  if(typeof getDigitalGoodsService !== 'function')   return; // not in TWA / no Play Billing
+  try {
+    const service   = await getDigitalGoodsService('https://play.google.com/billing');
+    const purchases = await service.listPurchases();
+    if(purchases && purchases.find(p => p.itemId === PLAY_PRODUCT)){
+      activateUnlock('play');
+    }
+  } catch(e){ /* silent — no toast on boot */ }
+}
+
 function _showRestoreDialog(){
   // Inline dialog — no browser prompt() needed
   const existing = document.getElementById('restore-dialog');
@@ -6643,9 +6661,9 @@ function incrementAction(){
 
 function getTrialStatus(){
   if(localStorage.getItem(UNLOCK_KEY) === 'true') return null;
-  const start = localStorage.getItem(TRIAL_KEY);
+  const start = _getTrialStart();
   if(!start) return { daysLeft: TRIAL_DAYS, actionsLeft: TRIAL_ACTIONS };
-  const daysUsed    = Math.floor((Date.now() - parseInt(start)) / (1000*60*60*24));
+  const daysUsed    = Math.floor((Date.now() - start) / (1000*60*60*24));
   const daysLeft    = Math.max(0, TRIAL_DAYS - daysUsed);
   const actionsLeft = Math.max(0, TRIAL_ACTIONS - parseInt(localStorage.getItem(ACTION_KEY)||'0'));
   return { daysLeft, actionsLeft };
@@ -6680,13 +6698,13 @@ function init(){
       document.body.style.filter = '';
     }
   });
-  // BUG-002 & BUG-004: Restore from IndexedDB if localStorage was cleared
-  restoreTrialFromIDB().catch(()=>{});
+  // BUG-004: Restore app data from IndexedDB if localStorage was cleared.
+  // Trial state is anchored to native Android storage via TendedBridge,
+  // so it does not need an IndexedDB shadow (which gets wiped together with
+  // localStorage on a Chrome data clear and only created a false sense of safety).
   loadFromIDB().then(() => {
-    // Seed initial save to IDB if data exists from localStorage
     if(D.meds.length || D.appts.length || D.health.length){
       idbSet(IDB_KEY, JSON.stringify(D)).catch(()=>{});
-      saveTrialToIDB().catch(()=>{});
     }
   }).catch(()=>{});
   // Auto-export reminder (weekly)
@@ -6715,6 +6733,10 @@ function init(){
   if(!localStorage.getItem(PIN_SET)){document.getElementById('pin-skip-btn').style.display='block';}
   checkRefillAlerts();checkApptAlerts();renderNotifBadge();checkBpAlert();
   renderTrialBanner();
+  // BUG-002: silent auto-restore — re-grants premium if user already purchased
+  silentRestoreOnBoot();
+  // Register service worker for offline shell + faster repeat launches (lowercase /tended/ path)
+  if('serviceWorker' in navigator){ navigator.serviceWorker.register('sw.js').catch(()=>{}); }
   syncDarkBtn();
   // Show tour for users who've onboarded but haven't seen the tour
   if(localStorage.getItem(OB_DONE_KEY) && !localStorage.getItem(TOUR_KEY)) {
