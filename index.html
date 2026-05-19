@@ -804,6 +804,12 @@ body.high-contrast small,body.high-contrast .small-text{color:#333!important}
   <div id="notif-list"></div>
 </div>
 
+<!-- Profile switcher banner — fixed to top of screen -->
+<div id="profile-switcher-banner" style="display:none;position:fixed;top:0;left:0;right:0;background:#7C3AED;color:white;padding:9px 16px;font-size:.82rem;font-weight:600;align-items:center;justify-content:space-between;gap:10px;z-index:500">
+  <span>👤 Viewing: <span id="profile-banner-name" style="font-weight:800"></span></span>
+  <button onclick="switchProfile('default')" style="background:rgba(255,255,255,.25);border:1px solid rgba(255,255,255,.4);color:white;border-radius:8px;padding:4px 12px;font-size:.78rem;font-weight:700;cursor:pointer;font-family:inherit;white-space:nowrap">← My Profile</button>
+</div>
+
 <div class="body-area">
 <div class="sidebar" role="navigation" aria-label="Main navigation">
   <div class="nav-section-label">Main</div>
@@ -833,11 +839,7 @@ body.high-contrast small,body.high-contrast .small-text{color:#333!important}
   <button class="nav-item" id="tour-target-settings" onclick="navTo('settings',this)"><span class="icon">⚙️</span> Settings</button>
 </div>
 
-<!-- Profile switcher banner — shows when viewing another profile -->
-<div id="profile-switcher-banner" style="display:none;background:#7C3AED;color:white;padding:9px 16px;font-size:.82rem;font-weight:600;align-items:center;justify-content:space-between;gap:10px;flex-shrink:0;position:sticky;top:0;z-index:200">
-  <span>👤 Viewing: <span id="profile-banner-name" style="font-weight:800"></span></span>
-  <button onclick="switchProfile('default')" style="background:rgba(255,255,255,.25);border:1px solid rgba(255,255,255,.4);color:white;border-radius:8px;padding:4px 12px;font-size:.78rem;font-weight:700;cursor:pointer;font-family:inherit;white-space:nowrap">← My Profile</button>
-</div>
+
 <div class="content" role="main" id="main-content">
 
 <!-- DASHBOARD -->
@@ -3066,10 +3068,17 @@ function switchProfile(id){
     if(id !== 'default'){
       banner.style.display = 'flex';
       bannerName.textContent = displayName;
-
-      banner.style.background = prof?.color || 'var(--teal)';
+      banner.style.background = prof?.color || '#7C3AED';
+      // Push shell content down so banner doesn't overlap
+      requestAnimationFrame(()=>{
+        const h = banner.getBoundingClientRect().height;
+        const shell = document.querySelector('.shell');
+        if(shell) shell.style.paddingTop = h + 'px';
+      });
     } else {
       banner.style.display = 'none';
+      const shell = document.querySelector('.shell');
+      if(shell) shell.style.paddingTop = '0px';
     }
   }
 
