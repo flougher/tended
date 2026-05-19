@@ -1688,12 +1688,6 @@ body.high-contrast small,body.high-contrast .small-text{color:#333!important}
 
 </body>
 </html// ── HTML Sanitization ─────────────────────────────────────────
-function escHtml(s){
-  if(s===null||s===undefined)return '';
-  return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;');
-}
-"use strict";
-function escHtml(s){ if(s===null||s===undefined)return ''; return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;').replace(/\//g,'&#x2F;'); }
 l>
 <html lang="en">
 <head>
@@ -8508,8 +8502,4 @@ init();
 
 </body>
 </html// ── HTML Sanitization ─────────────────────────────────────────
-function escHtml(s){
-  if(s===null||s===undefined)return '';
-  return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;');
-}
 >
