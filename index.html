@@ -1687,8 +1687,7 @@ body.high-contrast small,body.high-contrast .small-text{color:#333!important}
 </div>
 
 </body>
-</html// ── HTML Sanitization ─────────────────────────────────────────
-l>
+</html>
 <html lang="en">
 <head>
 <meta charset="UTF-8">
@@ -2301,1308 +2300,58 @@ body.high-contrast small,body.high-contrast .small-text{color:#333!important}
 </style>
 </head>
 <body>
-<a href="#main-content" class="skip-link">Skip to main content</a>
-<div id="offline-banner" role="alert" aria-live="polite">
-  📵 You're offline — your data is safe and the app still works
-</div>
-<div class="shell">
 
-<!-- PIN -->
-<div id="pin-screen" style="display:none;position:fixed;inset:0;background:linear-gradient(135deg,#0F766E,#1E293B);z-index:4000;align-items:center;justify-content:center;flex-direction:column;padding:20px">
-  <div style="text-align:center;max-width:320px;width:100%">
-
-    <!-- Logo -->
-    <div style="font-size:2.8rem;margin-bottom:10px">🏡</div>
-    <div style="font-family:'Lora',Georgia,'Times New Roman',serif;font-size:1.7rem;font-weight:700;color:white;margin-bottom:4px" id="pin-title">Tended</div>
-    <div style="font-size:.88rem;color:rgba(255,255,255,.55);margin-bottom:28px;line-height:1.5" id="pin-subtitle">Enter your PIN to continue</div>
-
-    <!-- Biometric shortcut — shown prominently if available -->
-    <button id="pin-bio-btn" onclick="bioUnlock()" style="display:none;background:rgba(255,255,255,.15);border:1.5px solid rgba(255,255,255,.35);color:white;font-size:1rem;font-weight:600;cursor:pointer;border-radius:14px;padding:14px 28px;font-family:'DM Sans',sans-serif;margin-bottom:24px;width:100%;transition:all .18s">
-      👆 Use Face ID / Fingerprint
-    </button>
-
-    <!-- PIN dots -->
-    <div style="display:flex;justify-content:center;gap:16px;margin-bottom:28px">
-      <div class="pin-dot" id="dot-0"></div><div class="pin-dot" id="dot-1"></div><div class="pin-dot" id="dot-2"></div><div class="pin-dot" id="dot-3"></div>
-    </div>
-
-    <!-- Keypad -->
-    <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:12px;max-width:260px;margin:0 auto">
-      <button class="pin-key" onclick="pinPress('1')">1</button><button class="pin-key" onclick="pinPress('2')">2</button><button class="pin-key" onclick="pinPress('3')">3</button>
-      <button class="pin-key" onclick="pinPress('4')">4</button><button class="pin-key" onclick="pinPress('5')">5</button><button class="pin-key" onclick="pinPress('6')">6</button>
-      <button class="pin-key" onclick="pinPress('7')">7</button><button class="pin-key" onclick="pinPress('8')">8</button><button class="pin-key" onclick="pinPress('9')">9</button>
-      <button class="pin-key pin-key-ghost" onclick="pinClear()">⌫</button><button class="pin-key" onclick="pinPress('0')">0</button><button class="pin-key pin-key-ghost" onclick="pinAction()">OK</button>
-    </div>
-
-    <!-- Error + actions -->
-    <div style="margin-top:20px;min-height:20px;font-size:.85rem;color:#F87171;font-weight:600" id="pin-error"></div>
-    <button id="pin-forgot" onclick="pinForgot()" style="display:none;margin-top:14px;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.2);color:rgba(255,255,255,.6);font-size:.82rem;cursor:pointer;border-radius:8px;padding:9px 20px;font-family:'DM Sans',sans-serif">Forgot PIN or first time here? Reset →</button>
-    <button id="pin-skip-btn" onclick="skipPin()" style="display:none;margin-top:10px;background:none;border:1px solid rgba(255,255,255,.3);color:rgba(255,255,255,.7);font-size:.85rem;cursor:pointer;border-radius:8px;padding:8px 18px;font-family:'DM Sans',sans-serif">Open without PIN</button>
-
-  </div>
-</div>
-
-
-
-<!-- ══ FEATURE TOUR ══════════════════════════════════════ -->
-<div id="tour-backdrop"></div>
-<div id="tour-spotlight" style="display:none"></div>
-<div id="tour-card" style="display:none">
-  <div class="tour-step-label" id="tour-label">Step 1 of 5</div>
-  <div class="tour-icon" id="tour-icon">💊</div>
-  <div class="tour-title" id="tour-title">Medications</div>
-  <div class="tour-body" id="tour-body">Your daily checklist.</div>
-  <div class="tour-tip" id="tour-tip" style="display:none"></div>
-  <div class="tour-actions">
-    <div class="tour-dots" id="tour-dots"></div>
-    <button class="btn-tour-skip" onclick="tourSkip()">Skip tour</button>
-    <button class="btn-tour-next" id="tour-next-btn" onclick="tourNext()">Next →</button>
-  </div>
-</div>
-
-
-
-<!-- ══ UNLOCK / PURCHASE OVERLAY ════════════════════════ -->
-<div id="unlock-overlay">
-  <div class="unlock-card">
-    <div class="unlock-icon">🏡</div>
-    <div class="trial-badge" id="unlock-trial-badge">✨ Free Trial Complete</div>
-    <div class="unlock-title">Your health data is saved.<br>Keep it protected.</div>
-    <div class="unlock-sub" id="unlock-personal-msg">
-      Your medications, appointments, and health records are all here — ready when you need them most.
-      Unlock Tended Health forever with one simple purchase.
-    </div>
-    <div class="unlock-price">
-      <div class="unlock-price-amt">$4.99</div>
-      <div class="unlock-price-label">ONE-TIME · Own it forever · No subscription ever</div>
-    </div>
-    <div class="unlock-features">
-      <div>Medications, appointments & daily health tracking</div>
-      <div>Emergency QR card — scannable by first responders</div>
-      <div>AI drug interaction checker & doctor visit prep</div>
-      <div>Family Loop, Caregiver Mode & Scam Shield</div>
-      <div>Your data stays on your device — always private</div>
-    </div>
-    <button onclick="purchaseUnlock()"
-      style="width:100%;background:linear-gradient(135deg,#0F766E,#1E293B);color:white;border:none;border-radius:14px;padding:16px;font-size:1.05rem;font-weight:700;cursor:pointer;font-family:'DM Sans',sans-serif;margin-bottom:10px;transition:all .2s;letter-spacing:.01em">
-      🔓 Unlock Forever — $4.99
-    </button>
-    <div style="display:flex;align-items:center;gap:6px;margin-bottom:10px;justify-content:center;flex-wrap:wrap">
-      <span style="font-size:.74rem;color:var(--slate-light)">✓ One-time charge</span>
-      <span style="font-size:.74rem;color:var(--slate-light)">·</span>
-      <span style="font-size:.74rem;color:var(--slate-light)">✓ No subscription</span>
-      <span style="font-size:.74rem;color:var(--slate-light)">·</span>
-      <span style="font-size:.74rem;color:var(--slate-light)">✓ Cancel anytime from Play Store</span>
-    </div>
-    <button onclick="restorePurchase()"
-      style="width:100%;background:none;border:1.5px solid var(--border);border-radius:14px;padding:11px;font-size:.87rem;font-weight:600;cursor:pointer;font-family:'DM Sans',sans-serif;color:var(--slate-mid);margin-bottom:10px">
-      Already purchased? Restore
-    </button>
-    <div style="font-size:.74rem;color:var(--slate-light);line-height:1.65;text-align:center">
-      Secured by Google Play. Your health data is never uploaded or shared.
-    </div>
-  </div>
-</div>
-
-<!-- ══ LOGGED OUT SCREEN ═══════════════════════════════ -->
-<div id="logout-screen" style="display:none;position:fixed;inset:0;background:linear-gradient(135deg,#0F766E,#1E293B);z-index:4000;align-items:center;justify-content:center;flex-direction:column;padding:20px;text-align:center">
-  <div style="font-size:3rem;margin-bottom:14px">🏡</div>
-  <div style="font-family:'Lora',Georgia,'Times New Roman',serif;font-size:1.7rem;font-weight:700;color:white;margin-bottom:8px">Tended</div>
-  <div style="font-size:.92rem;color:rgba(255,255,255,.6);margin-bottom:40px">You have been logged out</div>
-  <div style="font-size:.84rem;color:rgba(255,255,255,.45);margin-bottom:28px;line-height:1.7;max-width:280px">
-    Your health data is saved on this device.<br>Tap below to open the app again.
-  </div>
-  <button onclick="openFromLogout()" style="background:white;color:var(--teal);border:none;border-radius:14px;padding:16px 40px;font-size:1rem;font-weight:700;cursor:pointer;font-family:'DM Sans',sans-serif;box-shadow:0 4px 20px rgba(0,0,0,.2);transition:all .2s">
-    Open Tended →
-  </button>
-</div>
-
-<!-- ══ ONBOARDING ════════════════════════════════════════ -->
-<div id="ob-overlay">
+<!-- ══ PROFILE SETUP WIZARD ══════════════════════════════════ -->
+<div id="ps-overlay" style="display:none;position:fixed;inset:0;z-index:5100;background:linear-gradient(135deg,#0F766E,#1E293B);align-items:center;justify-content:center;padding:20px">
   <div class="ob-card">
-    <div class="ob-bar"><div class="ob-bar-fill" id="ob-fill" style="width:20%"></div></div>
+    <div class="ob-bar"><div class="ob-bar-fill" id="ps-fill" style="width:25%"></div></div>
     <div class="ob-dots">
-      <div class="ob-dot active" id="ob-d0"></div><div class="ob-dot" id="ob-d1"></div>
-      <div class="ob-dot" id="ob-d2"></div><div class="ob-dot" id="ob-d3"></div><div class="ob-dot" id="ob-d4"></div>
+      <div class="ob-dot active" id="ps-d0"></div><div class="ob-dot" id="ps-d1"></div>
+      <div class="ob-dot" id="ps-d2"></div><div class="ob-dot" id="ps-d3"></div>
     </div>
-    <!-- Step 0 -->
-    <div class="ob-step active" id="ob-s0">
-      <div class="ob-icon">🏡</div>
-      <div class="ob-title">Welcome to Tended Health</div>
-      <div class="ob-sub">Your private health companion. Everything stays on your device — never shared, never sold.</div>
-
-      <!-- Recommended: Sample data -->
-      <button onclick="obLoadDemo()" style="width:100%;background:linear-gradient(135deg,#0F766E,#0D9488);border:none;border-radius:14px;padding:16px 18px;cursor:pointer;text-align:left;font-family:'DM Sans',sans-serif;margin-bottom:10px;transition:all .2s;box-shadow:0 4px 14px rgba(15,118,110,.3)" onmouseover="this.style.transform='translateY(-1px)'" onmouseout="this.style.transform='none'">
-        <div style="display:flex;align-items:center;gap:10px">
-          <div style="font-size:1.6rem">🎭</div>
-          <div style="flex:1">
-            <div style="font-weight:700;font-size:.95rem;color:white;margin-bottom:2px">Explore with sample data</div>
-            <div style="font-size:.78rem;color:rgba(255,255,255,.8);line-height:1.4">See all features with example medications, appointments, and health data already loaded. Replace with your own anytime.</div>
-          </div>
-          <div style="color:rgba(255,255,255,.7);font-size:1.1rem">→</div>
-        </div>
-        <div style="margin-top:10px;background:rgba(255,255,255,.15);border-radius:8px;padding:6px 10px;font-size:.76rem;color:rgba(255,255,255,.9);line-height:1.5">
-          ✨ <strong>Recommended for new users</strong> — explore every section, then customise with your own information
-        </div>
-      </button>
-
-      <!-- Divider -->
-      <div style="display:flex;align-items:center;gap:10px;margin:4px 0 10px">
-        <div style="flex:1;height:1px;background:var(--border)"></div>
-        <span style="font-size:.76rem;color:var(--slate-light);white-space:nowrap">or start fresh</span>
-        <div style="flex:1;height:1px;background:var(--border)"></div>
-      </div>
-
-      <!-- Secondary: Enter your own name -->
-      <div class="form-group" style="text-align:left;margin-bottom:8px"><label style="font-size:.85rem">Your name</label><input id="ob-name" placeholder="e.g. Dorothy Williams" style="font-size:.95rem"></div>
-      <button class="btn btn-secondary" style="width:100%;justify-content:center" onclick="obNext(0,'ob-name')">Set up with my own data →</button>
+    <div class="ob-step active" id="ps-s0">
+      <div class="ob-icon">👤</div>
+      <div class="ob-title">Set up this profile</div>
+      <div class="ob-sub">Let's add a few quick details so the app is personalised for this person.</div>
+      <div class="form-group" style="text-align:left;margin-bottom:8px"><label style="font-size:.85rem">Patient name</label><input id="ps-name" placeholder="e.g. Margaret Thompson" style="font-size:.95rem"></div>
+      <button class="btn btn-primary" style="width:100%;justify-content:center" onclick="psNext(0,'ps-name')">Continue →</button>
     </div>
-    <!-- Step 1 -->
-    <div class="ob-step" id="ob-s1">
+    <div class="ob-step" id="ps-s1">
       <div class="ob-icon">💊</div>
-      <div class="ob-title">Add your first medication</div>
-      <div class="ob-sub">Start with your most important one. You can add more any time.</div>
-      <div class="form-group" style="text-align:left"><label>Medication name</label><input id="ob-med" placeholder="e.g. Metformin"></div>
+      <div class="ob-title">Add a medication</div>
+      <div class="ob-sub">Start with the most important one. More can be added any time.</div>
+      <div class="form-group" style="text-align:left"><label>Medication name</label><input id="ps-med" placeholder="e.g. Metformin"></div>
       <div class="form-row">
-        <div class="form-group" style="text-align:left"><label>Dosage</label><input id="ob-dose" placeholder="500 mg"></div>
-        <div class="form-group" style="text-align:left"><label>Time</label><input id="ob-time" placeholder="8:00 AM"></div>
+        <div class="form-group" style="text-align:left"><label>Dosage</label><input id="ps-dose" placeholder="500 mg"></div>
+        <div class="form-group" style="text-align:left"><label>Time</label><input id="ps-time" placeholder="8:00 AM"></div>
       </div>
       <div style="display:flex;gap:10px;margin-top:6px">
-        <button class="btn btn-secondary" style="flex:1;justify-content:center" onclick="obSkip()">Skip</button>
-        <button class="btn btn-primary" style="flex:2;justify-content:center" onclick="obSaveMed()">Save & Continue →</button>
+        <button class="btn btn-secondary" style="flex:1;justify-content:center" onclick="psGoTo(2)">Skip</button>
+        <button class="btn btn-primary" style="flex:2;justify-content:center" onclick="psSaveMed()">Save & Continue →</button>
       </div>
     </div>
-    <!-- Step 2 -->
-    <div class="ob-step" id="ob-s2">
+    <div class="ob-step" id="ps-s2">
       <div class="ob-icon">🩺</div>
-      <div class="ob-title">Who's your doctor?</div>
-      <div class="ob-sub">Used for your emergency card and appointment reminders.</div>
-      <div class="form-group" style="text-align:left"><label>Primary doctor</label><input id="ob-doc" placeholder="e.g. Dr. Sarah Chen"></div>
-      <div class="form-group" style="text-align:left"><label>Date of birth</label><input type="date" id="ob-dob"></div>
+      <div class="ob-title">Doctor & date of birth</div>
+      <div class="ob-sub">Used for the emergency card and appointment reminders.</div>
+      <div class="form-group" style="text-align:left"><label>Primary doctor</label><input id="ps-doc" placeholder="e.g. Dr. Sarah Chen"></div>
+      <div class="form-group" style="text-align:left"><label>Date of birth</label><input type="date" id="ps-dob"></div>
       <div style="display:flex;gap:10px;margin-top:6px">
-        <button class="btn btn-secondary" style="flex:1;justify-content:center" onclick="obSkip()">Skip</button>
-        <button class="btn btn-primary" style="flex:2;justify-content:center" onclick="obSaveDoctor()">Save & Continue →</button>
+        <button class="btn btn-secondary" style="flex:1;justify-content:center" onclick="psGoTo(3)">Skip</button>
+        <button class="btn btn-primary" style="flex:2;justify-content:center" onclick="psSaveDoctor()">Save & Continue →</button>
       </div>
     </div>
-    <!-- Step 3 -->
-    <div class="ob-step" id="ob-s3">
-      <div class="ob-icon">🔒</div>
-      <div class="ob-title">Keep it private? (Optional)</div>
-      <div class="ob-sub" style="margin-bottom:14px">Your data never leaves your device — it's already private. A lock is only useful if others share your phone.</div>
-
-      <!-- Option cards -->
-      <div style="display:flex;flex-direction:column;gap:7px;margin-bottom:12px;text-align:left">
-
-        <div style="background:var(--cream);border:1.5px solid var(--border);border-radius:12px;padding:11px 13px">
-          <div style="font-weight:700;font-size:.9rem;color:var(--slate);margin-bottom:2px">🔢 4-digit PIN</div>
-          <div style="font-size:.79rem;color:var(--slate-light);line-height:1.45;margin-bottom:8px">You'll enter 4 numbers each time you open the app. Simple and reliable on any device.</div>
-          <button class="btn btn-secondary btn-sm" style="width:100%;justify-content:center" onclick="obSetPin()">Set a PIN →</button>
-        </div>
-
-        <div id="ob-bio-card" style="background:var(--cream);border:1.5px solid var(--border);border-radius:12px;padding:11px 13px">
-          <div style="font-weight:700;font-size:.9rem;color:var(--slate);margin-bottom:2px">👆 Face ID / Fingerprint</div>
-          <div style="font-size:.79rem;color:var(--slate-light);line-height:1.45;margin-bottom:8px">Unlock with your face or fingerprint. Fast and hands-free. Supported on most modern phones.</div>
-          <button class="btn btn-secondary btn-sm" style="width:100%;justify-content:center" id="ob-bio-btn" onclick="obSetBiometric()">Enable Biometric →</button>
-        </div>
-
-        <button onclick="obSkip()" style="width:100%;background:var(--teal-pale);border:2px solid var(--teal-mid);border-radius:12px;padding:11px 13px;cursor:pointer;text-align:left;font-family:'DM Sans',sans-serif;transition:all .18s" onmouseover="this.style.background='#99F6E4'" onmouseout="this.style.background='var(--teal-pale)'">
-          <div style="font-weight:700;font-size:.92rem;color:var(--teal);margin-bottom:2px">✓ No lock — open directly</div>
-          <div style="font-size:.79rem;color:var(--slate-mid);line-height:1.45;margin-bottom:8px">App opens instantly. Recommended if you're the only person who uses this phone.</div>
-          <div style="background:var(--teal);color:white;border-radius:8px;padding:9px 14px;text-align:center;font-size:.88rem;font-weight:700">Continue without a lock →</div>
-        </button>
-
-      </div>
-      <div style="font-size:.76rem;color:var(--slate-light);text-align:center">You can change this any time in Settings → PIN Lock</div>
-    </div>
-    <!-- Step 4 -->
-    <div class="ob-step" id="ob-s4">
+    <div class="ob-step" id="ps-s3">
       <div class="ob-icon">🎉</div>
-      <div class="ob-title">You're all set!</div>
-      <div class="ob-sub">Tended Health is ready. Here's your first tip:</div>
+      <div class="ob-title" id="ps-done-title">Profile ready!</div>
+      <div class="ob-sub" id="ps-done-sub">The profile has been created. Tap below to go to the dashboard.</div>
       <div style="background:var(--teal-pale);border:1.5px solid var(--teal-mid);border-radius:12px;padding:14px;text-align:left;font-size:.88rem;margin-bottom:18px;line-height:1.7">
-        💡 <strong>Tap 💊 Medications</strong> to see your daily checklist. Check off each one as you take it.
+        💡 <strong>Tip:</strong> To switch back to your own profile, tap <strong>← My Profile</strong> at the top of the screen.
       </div>
-      <button class="btn btn-primary" style="width:100%;justify-content:center;font-size:1rem" onclick="obFinish()">Let's go! →</button>
-
+      <button class="btn btn-primary" style="width:100%;justify-content:center;font-size:1rem" onclick="psFinish()">Go to Dashboard →</button>
     </div>
   </div>
 </div>
-
-
-<!-- ══ DAILY SUMMARY MODAL ════════════════════════════════ -->
-<div class="overlay" id="daily-summary-modal"><div class="modal" style="max-width:520px">
-  <h2 style="font-family:'Lora',Georgia,'Times New Roman',serif;font-size:1.25rem;margin-bottom:16px">📋 Daily Summary</h2>
-  <p style="font-size:.87rem;color:var(--slate-light);margin-bottom:14px;line-height:1.6">Ready to copy and paste into a text message or WhatsApp to a family member.</p>
-
-  <!-- Summary text area -->
-  <div style="background:var(--cream);border:1.5px solid var(--border);border-radius:12px;padding:14px 16px;margin-bottom:14px;position:relative">
-    <textarea id="daily-summary-text" readonly style="width:100%;border:none;background:transparent;font-family:'DM Sans',sans-serif;font-size:.88rem;color:var(--slate);line-height:1.7;resize:none;outline:none;min-height:180px;cursor:text" onclick="this.select()"></textarea>
-  </div>
-
-  <!-- Character count -->
-  <div id="daily-summary-chars" style="font-size:.78rem;color:var(--slate-light);margin-bottom:14px;text-align:right"></div>
-
-  <!-- Include options -->
-  <div style="background:var(--white);border:1.5px solid var(--border);border-radius:12px;padding:12px 16px;margin-bottom:16px">
-    <div style="font-size:.82rem;font-weight:700;color:var(--slate-mid);margin-bottom:10px">Include in summary:</div>
-    <div style="display:flex;flex-direction:column;gap:8px;font-size:.88rem">
-      <label style="display:flex;align-items:center;gap:10px;cursor:pointer"><input type="checkbox" id="ds-meds" checked onchange="refreshDailySummary()"> 💊 Medications taken today</label>
-      <label style="display:flex;align-items:center;gap:10px;cursor:pointer"><input type="checkbox" id="ds-vitals" checked onchange="refreshDailySummary()"> ❤️ Latest vitals</label>
-      <label style="display:flex;align-items:center;gap:10px;cursor:pointer"><input type="checkbox" id="ds-appts" checked onchange="refreshDailySummary()"> 📅 Upcoming appointment</label>
-      <label style="display:flex;align-items:center;gap:10px;cursor:pointer"><input type="checkbox" id="ds-feel" checked onchange="refreshDailySummary()"> 😊 How I'm feeling</label>
-    </div>
-  </div>
-
-  <div style="display:flex;gap:10px">
-    <button class="btn btn-secondary" style="flex:1;justify-content:center" onclick="closeModal('daily-summary-modal',true)">Close</button>
-    <button class="btn btn-primary" style="flex:2;justify-content:center" onclick="copyDailySummary()" id="ds-copy-btn">📋 Copy to Clipboard</button>
-  </div>
-</div></div>
-
-
-
-<!-- ══ SCAN OVERLAY ════════════════════════════════════════ -->
-<div id="scan-overlay">
-  <div class="scan-card">
-    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px">
-      <h2 style="font-family:'Lora',Georgia,'Times New Roman',serif;font-size:1.25rem;margin:0">📷 Scan Pill Bottle</h2>
-      <button onclick="scanClose()" style="background:none;border:none;font-size:1.4rem;cursor:pointer;color:var(--slate-light)">✕</button>
-    </div>
-    <p style="font-size:.87rem;color:var(--slate-light);margin-bottom:12px;line-height:1.55">Take a photo of the label. AI will extract the name, dose, and instructions.</p>
-    <div class="scan-zone" onclick="document.getElementById('scan-input').click()">
-      <div style="font-size:2rem;margin-bottom:8px">📷</div>
-      <div style="font-weight:700;color:var(--teal);margin-bottom:4px">Tap to take photo or upload</div>
-      <div style="font-size:.77rem;color:var(--slate-light)">Works best in good lighting</div>
-    </div>
-    <input type="file" id="scan-input" accept="image/*" capture="environment" style="display:none" onchange="scanPhoto(this)">
-    <img id="scan-img" class="scan-preview" alt="Label">
-    <div id="scan-status" style="text-align:center;font-size:.87rem;color:var(--slate-light);margin:8px 0;display:none"></div>
-    <div id="scan-api-warn" style="display:none;background:var(--amber-pale);border:1px solid #FCD34D;border-radius:10px;padding:12px;font-size:.83rem;color:var(--amber);margin-top:10px">
-      ⚠️ API key needed. <button onclick="scanClose();showApiKeyPrompt()" style="background:none;border:none;color:var(--teal);font-weight:700;cursor:pointer;font-family:inherit;text-decoration:underline">Set key →</button>
-    </div>
-    <div class="scan-result" id="scan-result">
-      <div style="font-weight:700;font-size:.88rem;margin-bottom:10px">✅ Confirm details:</div>
-      <div class="scan-field"><label>Name</label><input id="scan-name" placeholder="Medication name"></div>
-      <div class="scan-field"><label>Dose</label><input id="scan-dose" placeholder="e.g. 500 mg"></div>
-      <div class="scan-field"><label>Frequency</label><input id="scan-freq" placeholder="e.g. Once daily"></div>
-      <div class="scan-field"><label>Instructions</label><input id="scan-notes" placeholder="e.g. Take with food"></div>
-      <div style="display:flex;gap:10px;margin-top:12px">
-        <button class="btn btn-secondary" style="flex:1;justify-content:center" onclick="scanClose()">Cancel</button>
-        <button class="btn btn-primary" style="flex:2;justify-content:center" onclick="scanAdd()">➕ Add Medication</button>
-      </div>
-    </div>
-  </div>
-</div>
-
-<!-- ══ VISIT PREP ══════════════════════════════════════════ -->
-<div id="vp-overlay">
-  <div class="vp-sheet">
-    <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:18px">
-      <div>
-        <h2 style="font-family:'Lora',Georgia,'Times New Roman',serif;font-size:1.35rem;margin:0 0 4px">🩺 Doctor Visit Prep</h2>
-        <div id="vp-appt-label" style="font-size:.84rem;color:var(--slate-light)">Your next appointment</div>
-      </div>
-      <div style="display:flex;gap:8px">
-        <button class="btn btn-secondary btn-sm" onclick="window.print()">🖨️ Print</button>
-        <button onclick="vpClose()" style="background:none;border:none;font-size:1.4rem;cursor:pointer;color:var(--slate-light)">✕</button>
-      </div>
-    </div>
-    <div class="vp-section" id="vp-appt-info"></div>
-    <div class="vp-section"><div class="vp-title">💊 Current Medications</div><div id="vp-meds"></div></div>
-    <div class="vp-section"><div class="vp-title">❤️ Recent Vitals</div><div id="vp-vitals"></div></div>
-    <div class="vp-section"><div class="vp-title">🌡️ Recent Symptoms</div><div id="vp-syms"></div></div>
-    <div class="vp-section">
-      <div class="vp-title">❓ Questions for Your Doctor
-        <button class="btn btn-secondary btn-sm" onclick="vpGenQuestions()" style="margin-left:auto;font-size:.77rem">🤖 Generate</button>
-      </div>
-      <div id="vp-questions" style="font-size:.87rem;color:var(--slate-light)">Tap Generate for AI-suggested questions.</div>
-    </div>
-    <div class="vp-section"><div class="vp-title">✅ Before You Go</div><div id="vp-checklist"></div></div>
-    <button class="btn btn-primary" style="width:100%;justify-content:center" onclick="vpClose()">Done</button>
-  </div>
-</div>
-
-<!-- DAILY CHECK-IN -->
-<div id="checkin-overlay" style="display:none;position:fixed;inset:0;background:rgba(15,23,42,.6);z-index:3500;align-items:center;justify-content:center;padding:20px;backdrop-filter:blur(4px)">
-  <div style="background:var(--white);border-radius:20px;padding:36px 32px;max-width:440px;width:100%;text-align:center;box-shadow:var(--shadow-lg);animation:slideUp .3s ease">
-    <div style="font-size:2.2rem;margin-bottom:10px">🌅</div>
-    <h2 style="font-family:'Lora',Georgia,'Times New Roman',serif;font-size:1.5rem;margin-bottom:6px">Good morning!</h2>
-    <p style="color:var(--slate-mid);font-size:.95rem;margin-bottom:28px">How are you feeling today?</p>
-    <div style="display:flex;justify-content:center;gap:12px;margin-bottom:24px">
-      <div class="feel-btn" onclick="selectCheckinFeel(5,this)"><span style="font-size:2rem">😄</span><span>Great</span></div>
-      <div class="feel-btn" onclick="selectCheckinFeel(4,this)"><span style="font-size:2rem">🙂</span><span>Good</span></div>
-      <div class="feel-btn" onclick="selectCheckinFeel(3,this)"><span style="font-size:2rem">😐</span><span>Okay</span></div>
-      <div class="feel-btn" onclick="selectCheckinFeel(2,this)"><span style="font-size:2rem">😕</span><span>Not great</span></div>
-      <div class="feel-btn" onclick="selectCheckinFeel(1,this)"><span style="font-size:2rem">😞</span><span>Rough</span></div>
-    </div>
-    <div class="form-group" style="text-align:left">
-      <label>Any notes? <span style="font-weight:400;color:var(--slate-light)">(optional)</span></label>
-      <textarea id="checkin-notes" rows="2" placeholder="Sleep, pain, energy…" style="width:100%;border:1.5px solid var(--border);border-radius:10px;padding:11px 14px;font-family:'DM Sans',sans-serif;font-size:.95rem;outline:none;resize:none"></textarea>
-    </div>
-    <div style="display:flex;gap:10px">
-      <button class="btn btn-primary" style="flex:2;justify-content:center" onclick="submitCheckin()">Save Check-in</button>
-      <button class="btn btn-secondary" style="flex:1;justify-content:center" onclick="skipCheckin()">Skip</button>
-    </div>
-  </div>
-</div>
-
-<!-- API KEY -->
-<div id="apikey-overlay" style="display:none;position:fixed;inset:0;background:rgba(15,23,42,.75);z-index:3000;align-items:center;justify-content:center;padding:20px;backdrop-filter:blur(4px);overflow-y:auto">
-  <div style="background:var(--white);border-radius:20px;padding:28px 26px;max-width:500px;width:100%;box-shadow:0 24px 60px rgba(0,0,0,.3);animation:slideUp .25s ease;margin:auto">
-
-    <!-- Header -->
-    <div style="text-align:center;margin-bottom:20px">
-      <div style="font-size:2.5rem;margin-bottom:8px">🤖</div>
-      <h2 style="font-family:'Lora',Georgia,'Times New Roman',serif;font-size:1.35rem;color:var(--slate);margin-bottom:6px">Activate AI Features</h2>
-      <p style="font-size:.86rem;color:var(--slate-light);line-height:1.6">The AI Assistant, Drug Interaction Checker, and Medication Scanner use Anthropic's AI. You need a free personal API key — takes about 3 minutes to set up.</p>
-    </div>
-
-    <!-- Free credit callout -->
-    <div style="background:var(--sage-pale);border:1.5px solid #86EFAC;border-radius:12px;padding:12px 16px;margin-bottom:18px;display:flex;align-items:flex-start;gap:10px">
-      <span style="font-size:1.3rem;flex-shrink:0">🎁</span>
-      <div style="font-size:.85rem;color:var(--sage);line-height:1.6">
-        <strong>Anthropic gives new accounts $5 free credit</strong> — enough for hundreds of AI queries. Most users never need to pay anything.
-      </div>
-    </div>
-
-    <!-- Step by step guide -->
-    <div style="background:var(--cream);border-radius:12px;padding:14px 16px;margin-bottom:18px">
-      <div style="font-size:.78rem;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--slate-light);margin-bottom:12px">How to get your free key</div>
-
-      <div style="display:flex;gap:12px;margin-bottom:10px;align-items:flex-start">
-        <div style="width:24px;height:24px;border-radius:50%;background:var(--teal);color:white;font-size:.75rem;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:1px">1</div>
-        <div style="font-size:.86rem;color:var(--slate-mid);line-height:1.55">
-          Open a new browser tab and go to<br>
-          <strong style="color:var(--teal)">console.anthropic.com</strong>
-        </div>
-      </div>
-
-      <div style="display:flex;gap:12px;margin-bottom:10px;align-items:flex-start">
-        <div style="width:24px;height:24px;border-radius:50%;background:var(--teal);color:white;font-size:.75rem;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:1px">2</div>
-        <div style="font-size:.86rem;color:var(--slate-mid);line-height:1.55">
-          Click <strong>Sign Up</strong> and create a free account with your email address
-        </div>
-      </div>
-
-      <div style="display:flex;gap:12px;margin-bottom:10px;align-items:flex-start">
-        <div style="width:24px;height:24px;border-radius:50%;background:var(--teal);color:white;font-size:.75rem;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:1px">3</div>
-        <div style="font-size:.86rem;color:var(--slate-mid);line-height:1.55">
-          Once signed in click <strong>API Keys</strong> in the left menu, then click <strong>Create Key</strong>
-        </div>
-      </div>
-
-      <div style="display:flex;gap:12px;margin-bottom:10px;align-items:flex-start">
-        <div style="width:24px;height:24px;border-radius:50%;background:var(--teal);color:white;font-size:.75rem;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:1px">4</div>
-        <div style="font-size:.86rem;color:var(--slate-mid);line-height:1.55">
-          Name it <strong>Tended Health</strong> and click <strong>Create Key</strong>. Copy the key — it starts with <strong>sk-ant-</strong>
-        </div>
-      </div>
-
-      <div style="display:flex;gap:12px;align-items:flex-start">
-        <div style="width:24px;height:24px;border-radius:50%;background:var(--teal);color:white;font-size:.75rem;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:1px">5</div>
-        <div style="font-size:.86rem;color:var(--slate-mid);line-height:1.55">
-          Come back here, paste it in the box below and tap <strong>Save & Activate</strong>
-        </div>
-      </div>
-    </div>
-
-    <!-- Key input -->
-    <div style="margin-bottom:6px;font-size:.82rem;font-weight:700;color:var(--slate-mid)">Paste your API key here:</div>
-    <input id="apikey-input" type="password" placeholder="sk-ant-api03-…"
-      style="width:100%;border:1.5px solid var(--border);border-radius:10px;padding:12px 14px;font-size:.92rem;font-family:'DM Sans',sans-serif;outline:none;margin-bottom:6px;transition:border-color .18s"
-      onfocus="this.style.borderColor='var(--teal-mid)'"
-      onblur="this.style.borderColor='var(--border)'"
-      onkeydown="if(event.key==='Enter')submitApiKey()">
-    <div style="font-size:.76rem;color:var(--slate-light);margin-bottom:14px">Your key is stored only on this device and never sent anywhere except Anthropic's servers when you use AI features.</div>
-
-    <!-- Buttons -->
-    <div style="display:flex;gap:10px;margin-bottom:12px">
-      <button onclick="submitApiKey()" style="flex:2;background:var(--teal);color:white;border:none;border-radius:10px;padding:13px;font-size:.95rem;font-weight:700;cursor:pointer;font-family:'DM Sans',sans-serif;transition:all .18s">
-        ✅ Save & Activate
-      </button>
-      <button onclick="closeApiKeyPrompt()" style="flex:1;background:var(--cream);color:var(--slate-mid);border:1.5px solid var(--border);border-radius:10px;padding:13px;font-size:.88rem;font-weight:600;cursor:pointer;font-family:'DM Sans',sans-serif">
-        Skip
-      </button>
-    </div>
-
-    <!-- Privacy note -->
-    <div style="text-align:center;font-size:.76rem;color:var(--slate-light);line-height:1.6">
-      🔐 AI features are completely optional.<br>All other Tended Health features work without a key.
-    </div>
-
-  </div>
-</div>
-
-<!-- CAREGIVER BANNER -->
-<div class="caregiver-banner" id="caregiver-banner">
-  <span style="font-size:.95rem">👁 Caregiver View — Read Only</span>
-  <span style="font-size:.8rem;opacity:.7;margin-left:6px">No changes can be made</span>
-  <button onclick="exitCaregiverModePrompt()" style="margin-left:auto;background:rgba(255,255,255,.25);border:1px solid rgba(255,255,255,.4);color:white;border-radius:8px;padding:6px 14px;cursor:pointer;font-family:'DM Sans',sans-serif;font-weight:700;font-size:.85rem">🔓 Exit</button>
-</div>
-
-<!-- TOP BAR -->
-<div class="top-bar">
-  <div class="logo">
-    <div class="logo-mark">🏡</div>
-    <div><div class="logo-text">Tended Health</div><div class="logo-sub" id="top-date"></div></div>
-  </div>
-  <div class="header-actions">
-    <button class="dark-toggle" id="dark-toggle-btn" onclick="toggleDark()" title="Toggle dark mode" aria-label="Toggle dark mode">🌙</button>
-    <button id="lock-now-btn" onclick="lockNow()" title="Lock app" aria-label="Lock app now" style="display:none;width:38px;height:38px;border-radius:10px;background:var(--cream);border:1.5px solid var(--border);align-items:center;justify-content:center;cursor:pointer;font-size:1.1rem;transition:all .2s;flex-shrink:0" onmouseover="this.style.background='var(--teal-pale)';this.style.borderColor='var(--teal-mid)'" onmouseout="this.style.background='var(--cream)';this.style.borderColor='var(--border)'">🔒</button>
-    <button onclick="logOff()" title="Log out" aria-label="Log out" style="height:38px;border-radius:10px;background:var(--cream);border:1.5px solid var(--border);display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:.78rem;font-weight:700;color:var(--slate-mid);padding:0 12px;gap:5px;transition:all .2s;flex-shrink:0;font-family:'DM Sans',sans-serif" onmouseover="this.style.background='var(--rose-pale)';this.style.borderColor='#FECACA';this.style.color='var(--rose)'" onmouseout="this.style.background='var(--cream)';this.style.borderColor='var(--border)';this.style.color='var(--slate-mid)'">🚪 Log Out</button>
-    <button class="notif-dot" onclick="toggleNotifPanel()" id="notif-trigger" aria-label="Notifications" style="cursor:pointer">🔔<div class="dot" id="notif-dot" style="display:none"></div></button>
-    <div class="user-chip">👤 <span id="topbar-profile-dot" style="width:8px;height:8px;border-radius:50%;background:#0F766E;display:inline-block;margin-right:3px;vertical-align:middle"></span><span id="topbar-profile-name" id="user-name-chip">My Profile</span> <span style="font-size:.7rem;opacity:.5">▼</span></div>
-    <button class="sos-btn" onclick="navTo('contacts')" aria-label="Emergency contacts">🚨 Emergency</button>
-  </div>
-</div>
-
-<div class="notif-panel" id="notif-panel">
-  <div class="notif-header">Notifications <span style="color:var(--slate-light);font-weight:400;font-size:.8rem;cursor:pointer" onclick="clearNotifs()">Clear all</span></div>
-  <div id="notif-list"></div>
-</div>
-
-<div class="body-area">
-<div class="sidebar" role="navigation" aria-label="Main navigation">
-  <div class="nav-section-label">Main</div>
-  <button class="nav-item active" onclick="navTo('dashboard',this)"><span class="icon">🏠</span> Dashboard</button>
-  <button class="nav-item" onclick="navTo('ai',this)"><span class="icon">🤖</span> AI Assistant</button>
-  <div class="nav-section-label">Health</div>
-  <button class="nav-item" id="tour-target-meds" onclick="navTo('medications',this)"><span class="icon">💊</span> Medications <span class="nav-badge" id="nb-meds" style="display:none">!</span></button>
-  <button class="nav-item" id="tour-target-appts" onclick="navTo('appointments',this)"><span class="icon">📅</span> Appointments</button>
-  <button class="nav-item" onclick="navTo('timeline',this)"><span class="icon">⏰</span> Med Schedule</button>
-  <button class="nav-item" id="tour-target-health" onclick="navTo('health',this)"><span class="icon">❤️</span> Health Log</button>
-  <button class="nav-item" onclick="navTo('symptoms',this)"><span class="icon">🌡️</span> Symptoms</button>
-  <button class="nav-item" onclick="navTo('vitals',this)"><span class="icon">📈</span> Vitals Trends</button>
-  <button class="nav-item" onclick="navTo('trends',this)"><span class="icon">🧠</span> AI Insights</button>
-  <div class="nav-section-label">Admin</div>
-  <button class="nav-item" onclick="navTo('insurance',this)"><span class="icon">📋</span> Insurance <span class="nav-badge amber" id="nb-claims" style="display:none">!</span></button>
-  <button class="nav-item" onclick="navTo('documents',this)"><span class="icon">📁</span> Documents</button>
-  <button class="nav-item" onclick="navTo('scam',this)"><span class="icon">🛡️</span> Scam Shield</button>
-  <button class="nav-item" onclick="navTo('interactions',this)"><span class="icon">⚗️</span> Drug Interactions</button>
-  <button class="nav-item" onclick="navTo('summary',this)"><span class="icon">📄</span> Health Summary</button>
-  <button class="nav-item" id="tour-target-qr" onclick="navTo('qr',this)"><span class="icon">🆘</span> Emergency QR</button>
-  <div class="nav-section-label">People</div>
-  <button class="nav-item" onclick="navTo('caregiver',this)"><span class="icon">👁</span> Caregiver Mode</button>
-  <button class="nav-item" onclick="navTo('family',this)"><span class="icon">👨‍👩‍👧</span> Family Loop</button>
-  <button class="nav-item" onclick="navTo('contacts',this)"><span class="icon">📞</span> Contacts</button>
-  <div class="nav-section-label">Account</div>
-  <button class="nav-item" onclick="navTo('profiles',this)"><span class="icon">👥</span> Profiles</button>
-  <button class="nav-item" id="tour-target-settings" onclick="navTo('settings',this)"><span class="icon">⚙️</span> Settings</button>
-</div>
-
-<!-- Profile switcher banner — shows when viewing another profile -->
-<div id="profile-switcher-banner" style="display:none;background:#7C3AED;color:white;padding:9px 16px;font-size:.82rem;font-weight:600;align-items:center;justify-content:space-between;gap:10px;flex-shrink:0">
-  <span>👤 Viewing: <span id="profile-banner-name" style="font-weight:800"></span></span>
-  <button onclick="switchProfile('default')" style="background:rgba(255,255,255,.25);border:1px solid rgba(255,255,255,.4);color:white;border-radius:8px;padding:4px 12px;font-size:.78rem;font-weight:700;cursor:pointer;font-family:inherit;white-space:nowrap">← My Profile</button>
-</div>
-<div class="content" role="main" id="main-content">
-
-<!-- DASHBOARD -->
-<div id="section-dashboard" class="section active">
-  <div id="bp-trend-alert" style="display:none;background:var(--rose-pale);border:2px solid var(--rose);border-radius:14px;padding:14px 18px;margin-bottom:18px;align-items:flex-start;gap:12px">
-    <div style="font-size:1.6rem;flex-shrink:0">🩺</div>
-    <div>
-      <div style="font-weight:700;color:var(--rose);font-size:.95rem;margin-bottom:4px">Blood Pressure Alert</div>
-      <div style="font-size:.88rem;color:var(--slate-mid);line-height:1.6">Your last 3 readings have been 140 or above. This may indicate high blood pressure — consider contacting your doctor.</div>
-      <button onclick="navTo('health')" class="btn btn-secondary btn-sm" style="margin-top:10px">View Health Log →</button>
-    </div>
-    <button onclick="this.parentElement.style.display='none'" style="background:none;border:none;color:var(--rose);cursor:pointer;font-size:1.2rem;flex-shrink:0;margin-left:auto">✕</button>
-  </div>
-  <div id="reminder-status-bar" style="display:none;background:var(--teal-pale);border:1px solid var(--teal-mid);border-radius:12px;padding:10px 16px;margin-bottom:16px;font-size:.84rem;color:var(--teal);display:flex;align-items:center;gap:10px">
-    <span>🔔</span>
-    <span id="reminder-status-text">Reminders active</span>
-    <button onclick="navTo('settings')" style="margin-left:auto;background:none;border:none;color:var(--teal);font-size:.8rem;font-weight:700;cursor:pointer;text-decoration:underline;font-family:inherit">Manage →</button>
-  </div>
-  <div class="page-header">
-    <div><div class="page-title">Good <span id="greeting-time">morning</span>! 👋</div><div class="page-sub">Here's your daily overview.</div></div>
-    <div style="display:flex;gap:10px">
-      <button class="btn btn-secondary" onclick="openCheckin()">🌅 Check In</button>
-      <button class="btn btn-secondary" onclick="navTo('ai')">🤖 Ask AI</button>
-    </div>
-  </div>
-  <div id="checkin-strip" style="display:none;margin-bottom:18px"></div>
-  <div class="grid-4" style="margin-bottom:22px">
-    <div class="stat-tile" onclick="navTo('medications')" style="border-left:4px solid var(--teal)"><div class="stat-icon" style="background:var(--teal-pale)">💊</div><div><div class="stat-num" id="d-meds">0/0</div><div class="stat-label">Meds Today</div><div class="progress-wrap" style="width:100px;margin-top:6px"><div class="progress-fill" id="d-med-prog" style="width:0%"></div></div></div></div>
-    <div class="stat-tile" onclick="navTo('appointments')" style="border-left:4px solid var(--indigo)"><div class="stat-icon" style="background:var(--indigo-pale)">📅</div><div><div class="stat-num" id="d-appts">0</div><div class="stat-label">Upcoming Appts</div></div></div>
-    <div class="stat-tile" onclick="navTo('insurance')" style="border-left:4px solid var(--amber)"><div class="stat-icon" style="background:var(--amber-pale)">📋</div><div><div class="stat-num" id="d-claims">0</div><div class="stat-label">Pending Claims</div></div></div>
-    <div class="stat-tile" onclick="navTo('health')" style="border-left:4px solid #EC4899"><div class="stat-icon" style="background:#FDF2F8">❤️</div><div><div class="stat-num" id="d-logs">0</div><div class="stat-label">Health Entries</div></div></div>
-  </div>
-  <!-- Medical Alert Card — shown when allergies or conditions are set -->
-  <div id="dash-medical-alert" class="medical-alert-card" onclick="navTo('settings')" style="display:none">
-    <div class="medical-alert-title">
-      <span style="font-size:1.4rem">⚕️</span>
-      <span>Medical Alert Info</span>
-      <span style="margin-left:auto;font-size:.75rem;font-weight:400;opacity:.7">Tap to edit →</span>
-    </div>
-    <div id="dash-alert-allergies" class="alert-section" style="display:none">
-      <div class="alert-section-label">⚠️ Allergies</div>
-      <div class="alert-section-value" id="dash-alert-allergy-text"></div>
-    </div>
-    <div id="dash-alert-conditions" class="alert-section" style="display:none">
-      <div class="alert-section-label">🏥 Medical Conditions</div>
-      <div class="alert-section-value" id="dash-alert-condition-text"></div>
-    </div>
-    <div id="dash-alert-blood" class="alert-section" style="display:none">
-      <div class="alert-section-label">🩸 Blood Type</div>
-      <div class="alert-section-value" id="dash-alert-blood-text"></div>
-    </div>
-    <div class="alert-edit-hint">This card is visible to anyone who opens the app · Edit in Settings</div>
-  </div>
-
-  <div class="grid-2">
-    <div class="card"><div class="card-title">💊 Today's Medications</div><div id="d-med-list"><div class="empty"><div class="ei">💊</div><p>No medications yet.</p></div></div></div>
-    <div class="card"><div class="card-title">📅 Upcoming Appointments</div><div id="d-appt-list"><div class="empty"><div class="ei">📅</div><p>No appointments yet.</p></div></div></div>
-    <div class="card"><div class="card-title">❤️ Health Score</div>
-      <div class="score-ring-wrap"><div><div class="score-big" id="health-score">--</div><div class="score-label">out of 100</div></div>
-        <div style="flex:1"><div style="font-size:.88rem;margin-bottom:8px;color:var(--slate-mid)" id="health-score-desc">Log vitals to get your score.</div>
-          <div style="display:flex;gap:8px;flex-wrap:wrap">
-            <button class="btn btn-primary btn-sm" onclick="addHealth()">+ Log Vitals</button>
-            <button class="btn btn-secondary btn-sm" onclick="navTo('vitals')">📈 Trends</button>
-            <button class="btn btn-secondary btn-sm" onclick="navTo('trends')">🧠 AI Insights</button>
-          </div></div></div>
-      <div id="dash-latest-vitals" style="margin-top:12px"></div></div>
-    <div class="card"><div class="card-title">🛡️ Scam Shield</div>
-      <div class="scam-alert" style="margin:0"><strong>⚠️ Common Scam This Week:</strong><div style="margin-top:6px;font-size:.88rem">Medicare is calling to say your new card is ready and needs your Social Security number. <strong>This is a scam.</strong> Medicare never calls unsolicited.</div></div>
-      <div style="margin-top:12px"><button class="btn btn-secondary btn-sm" onclick="navTo('scam')">🔍 Check a Call →</button></div></div>
-  </div>
-</div>
-
-<!-- AI ASSISTANT -->
-<div id="section-ai" class="section">
-  <div class="page-header"><div><div class="page-title">🤖 AI Assistant</div><div class="page-sub">Ask anything about your health, medications, or insurance</div></div></div>
-  <div class="chat-area">
-    <div class="quick-prompts">
-      <button class="qp-btn" onclick="quickPrompt(this)">💊 Drug interactions</button>
-      <button class="qp-btn" onclick="quickPrompt(this)">📅 What to bring to my appointment?</button>
-      <button class="qp-btn" onclick="quickPrompt(this)">🛡️ Is this call a scam?</button>
-      <button class="qp-btn" onclick="quickPrompt(this)">📋 Help me understand my EOB</button>
-      <button class="qp-btn" onclick="quickPrompt(this)">🌡️ When should I see a doctor?</button>
-    </div>
-    <div class="chat-messages" id="chat-messages">
-      <div class="msg ai"><div class="ai-label">🤖 Tended Health AI</div>Hello! I'm your personal health assistant. I can help with medications, appointments, insurance, scam calls, or any health questions. What would you like to know?</div>
-    </div>
-    <div class="chat-input-area">
-      <input class="chat-input" id="chat-input" placeholder="Ask me anything…" onkeydown="if(event.key==='Enter'&&!event.shiftKey){event.preventDefault();sendChat()}">
-      <button class="send-btn" id="chat-send-btn" onclick="sendChat()">Send ↑</button>
-    </div>
-  </div>
-</div>
-
-<!-- MEDICATIONS -->
-<div id="section-medications" class="section">
-  <div class="page-header"><div><div class="page-title">💊 Medications</div><div class="page-sub">Daily prescriptions and supplements</div></div>
-  <div style="display:flex;gap:8px;flex-wrap:wrap">
-    <button class="btn btn-secondary no-caregiver" onclick="scanOpen()">📷 Scan Label</button>
-    <button class="btn btn-primary no-caregiver" onclick="addMed()">+ Add</button>
-  </div></div>
-  <div class="card" style="margin-bottom:18px"><div class="card-title">📋 Today's Checklist</div><div id="meds-checklist"></div></div>
-  <h3 style="font-family:'Lora',Georgia,'Times New Roman',serif;font-size:1.1rem;margin-bottom:14px">All Medications</h3>
-  <div class="search-bar-wrap no-caregiver">
-    <span class="search-icon">🔍</span>
-    <input id="med-search-input" placeholder="Search medications…" oninput="filterMeds(this.value)" autocomplete="off" aria-label="Search medications">
-    <button class="search-clear" id="med-search-clear" onclick="clearMedSearch()" aria-label="Clear search" style="display:none">✕</button>
-  </div>
-  <div class="grid-3" id="meds-cards"></div>
-</div>
-
-<!-- APPOINTMENTS -->
-<div id="section-appointments" class="section">
-  <div class="page-header"><div><div class="page-title">📅 Appointments</div><div class="page-sub">Upcoming doctors, specialists, and visits</div></div>
-  <div style="display:flex;gap:8px;flex-wrap:wrap">
-    <button class="btn btn-secondary" onclick="vpOpen()">🩺 Visit Prep</button>
-    <button class="btn btn-secondary" onclick="printDoctorSummary()">📄 Doctor Summary</button>
-    <button class="btn btn-primary no-caregiver" onclick="addAppt()">+ Add</button>
-  </div></div>
-  <div class="grid-2">
-    <div class="card"><div id="appts-full"></div></div>
-    <div>
-      <div class="card" style="margin-bottom:16px"><div class="card-title">✅ Prep Checklist</div><div style="font-size:.85rem;color:var(--slate-light);margin-bottom:12px">Check off items before your next visit:</div><div id="prep-checklist"></div></div>
-      <div class="card"><div class="card-title">💡 Questions for Your Doctor</div><p style="font-size:.88rem;color:var(--slate-light);margin-bottom:12px">Generate smart questions from your health data.</p><button class="btn btn-primary btn-sm" onclick="generateDoctorQuestions()">🤖 Generate Questions</button><div id="doctor-questions" style="margin-top:12px"></div></div>
-    </div>
-  </div>
-</div>
-
-<!-- HEALTH LOG -->
-<div id="section-health" class="section">
-  <div class="page-header"><div><div class="page-title">❤️ Health Log</div><div class="page-sub">Track vitals and how you feel each day</div></div><button class="btn btn-primary no-caregiver" onclick="addHealth()">+ Log Today</button></div>
-  <div class="search-bar-wrap no-caregiver">
-    <span class="search-icon">🔍</span>
-    <input id="health-search-input" placeholder="Search by date or note…" oninput="filterHealth(this.value)" autocomplete="off" aria-label="Search health entries">
-    <button class="search-clear" id="health-search-clear" onclick="clearHealthSearch()" aria-label="Clear search" style="display:none">✕</button>
-  </div>
-  <div id="health-entries"></div>
-</div>
-
-<!-- SYMPTOMS -->
-<div id="section-symptoms" class="section">
-  <div class="page-header"><div><div class="page-title">🌡️ Symptoms</div><div class="page-sub">Log symptoms to share with your doctor</div></div><button class="btn btn-primary no-caregiver" onclick="addSymptom()">+ Log Symptom</button></div>
-  <div class="grid-2">
-    <div><div id="symptom-log"><div class="empty"><div class="ei">🌡️</div><p>No symptoms logged yet.</p></div></div></div>
-    <div class="card"><div class="card-title">📊 Summary</div><div id="symptom-summary"><p style="color:var(--slate-light);font-size:.9rem">Log symptoms to see patterns.</p></div><div style="margin-top:16px"><button class="btn btn-secondary btn-sm" onclick="exportSymptoms()">📄 Export for Doctor</button></div></div>
-  </div>
-</div>
-
-<!-- TIMELINE -->
-<div id="section-timeline" class="section">
-  <div class="page-header"><div><div class="page-title">⏰ Med Schedule</div><div class="page-sub">Today's medications by time</div></div><button class="btn btn-secondary no-print" onclick="printDailyReport()">🖨️ Print Report</button></div>
-  <div class="grid-2">
-    <div class="card"><div class="card-title">📋 Today's Timeline</div><div id="med-timeline"></div></div>
-    <div class="card"><div class="card-title">✅ Weekly Completion</div>
-      <div style="text-align:center;padding:10px 0"><div style="font-size:3rem;font-weight:800;color:var(--teal)" id="med-pct-big">0%</div><div style="color:var(--slate-light);font-size:.9rem;margin-top:4px">of today's medications taken</div><div style="margin-top:20px" id="med-streak-display"></div></div>
-      <canvas id="med-weekly-chart" height="140"></canvas></div>
-  </div>
-</div>
-
-<!-- VITALS -->
-<div id="section-vitals" class="section">
-  <div class="page-header"><div><div class="page-title">📈 Vitals Trends</div><div class="page-sub">Your health data over time</div></div><button class="btn btn-primary no-caregiver" onclick="addHealth()">+ Log Today</button></div>
-  <div class="grid-2">
-    <div class="card"><div class="card-title">🩺 Blood Pressure</div><div class="chart-wrap"><canvas id="bp-chart"></canvas></div></div>
-    <div class="card"><div class="card-title">💓 Heart Rate</div><div class="chart-wrap"><canvas id="hr-chart"></canvas></div></div>
-    <div class="card"><div class="card-title">⚖️ Weight</div><div class="chart-wrap"><canvas id="wt-chart"></canvas></div></div>
-    <div class="card"><div class="card-title">🩸 Blood Sugar</div><div class="chart-wrap"><canvas id="bs-chart"></canvas></div></div>
-  </div>
-</div>
-
-<!-- AI INSIGHTS -->
-<div id="section-trends" class="section">
-  <div class="page-header"><div><div class="page-title">🧠 AI Health Insights</div><div class="page-sub">AI analysis of your health trends and patterns</div></div><button class="btn btn-primary" id="trend-analyze-btn" onclick="runTrendAnalysis()">🔍 Analyze My Health Data</button></div>
-  <div id="trend-loading" style="display:none;text-align:center;padding:40px" class="card">
-    <div style="font-size:2rem;margin-bottom:12px">🧠</div>
-    <div style="font-weight:600;margin-bottom:8px">Analyzing your health data…</div>
-    <div style="color:var(--slate-light);font-size:.9rem">Reading vitals trends, medications, and symptoms</div>
-    <div style="margin-top:16px;height:4px;background:var(--border);border-radius:4px;overflow:hidden"><div id="trend-progress" style="height:100%;background:var(--teal);border-radius:4px;width:0%;transition:width 2s ease"></div></div>
-  </div>
-  <div id="trend-results"><div class="card" style="text-align:center;padding:40px"><div style="font-size:2.5rem;margin-bottom:12px">🧠</div><div style="font-weight:600;font-size:1.1rem;margin-bottom:8px">Ready to analyze your health data</div><div style="color:var(--slate-light);font-size:.9rem;margin-bottom:20px">You need at least 3 health log entries for a meaningful analysis.</div><button class="btn btn-primary" onclick="runTrendAnalysis()">🔍 Run AI Analysis</button></div></div>
-</div>
-
-<!-- INSURANCE -->
-<div id="section-insurance" class="section">
-  <div class="page-header"><div><div class="page-title">📋 Insurance & Claims</div><div class="page-sub">Track Medicare, Medicaid, and supplemental claims</div></div><button class="btn btn-primary no-caregiver" onclick="openAddClaim()">+ Add Claim</button></div>
-  <div style="display:flex;gap:14px;margin-bottom:20px;flex-wrap:wrap" id="insurance-stats"></div>
-  <div id="claims-full"><div class="empty"><div class="ei">📋</div><p>No claims yet.</p></div></div>
-</div>
-
-<!-- DOCUMENTS -->
-<div id="section-documents" class="section">
-  <div class="page-header"><div><div class="page-title">📁 Documents & Cards</div><div class="page-sub">Store important cards and documents — with photos</div></div><button class="btn btn-primary no-caregiver" onclick="openModal('doc-modal')">+ Add Document</button></div>
-  <div id="storage-warning" style="display:none;background:var(--amber-pale);border:1.5px solid #FCD34D;border-radius:10px;padding:10px 14px;margin-bottom:14px;font-size:.83rem;color:var(--amber);line-height:1.6">
-    ⚠️ <strong>Storage almost full.</strong> You are using most of your available storage. <button onclick="exportData()" style="background:none;border:none;color:var(--teal);font-weight:700;cursor:pointer;font-family:inherit;text-decoration:underline">Export a backup</button> before adding more photos. Photos should be resized before uploading.
-  </div>
-  <div class="grid-3" id="docs-grid"><div class="empty" style="grid-column:1/-1"><div class="ei">📁</div><p>Store Medicare cards, insurance cards, living wills, and more.</p></div></div>
-</div>
-
-<!-- SCAM -->
-<div id="section-scam" class="section">
-  <div class="page-header"><div><div class="page-title">🛡️ Scam Shield</div><div class="page-sub">Check calls, texts, and emails for fraud</div></div></div>
-  <div class="grid-2">
-    <div><div class="card"><div class="card-title">🔍 Scam Checker</div>
-      <p style="font-size:.9rem;color:var(--slate-mid);margin-bottom:14px">Describe a suspicious call, text, or email and the AI will analyze it.</p>
-      <textarea id="scam-input" style="width:100%;border:1.5px solid var(--border);border-radius:10px;padding:12px;font-family:'DM Sans',sans-serif;font-size:.95rem;height:100px;outline:none;resize:vertical" placeholder="e.g. Someone called saying my Social Security number was suspended…"></textarea>
-      <button class="btn btn-primary" id="scam-check-btn" style="margin-top:10px;width:100%" onclick="checkScam()">🔍 Analyze for Scams</button>
-      <div id="scam-result" style="margin-top:14px"></div></div></div>
-    <div>
-      <div class="card" style="margin-bottom:14px"><div class="card-title">⚠️ Top Scams</div><div id="scam-tips-list"></div></div>
-      <div class="scam-alert green"><strong>✅ You're SAFE if...</strong>
-        <ul style="margin-top:8px;margin-left:16px;font-size:.88rem;line-height:1.9">
-          <li>You <strong>called them first</strong></li><li>No gift cards / wire transfers requested</li><li>No SSN or Medicare number asked for</li><li>No urgency or threats</li>
-        </ul></div>
-    </div>
-  </div>
-</div>
-
-<!-- DRUG INTERACTIONS -->
-<div id="section-interactions" class="section">
-  <div class="page-header">
-    <div><div class="page-title">⚗️ Drug Interaction Checker</div><div class="page-sub">Check your medications for dangerous combinations</div></div>
-    <button class="btn btn-primary" onclick="checkMyMeds()">🔍 Check All My Meds</button>
-  </div>
-  <div class="grid-2">
-    <div>
-      <div class="card" style="margin-bottom:18px">
-        <div class="card-title">🔍 Check Two Medications</div>
-        <p style="font-size:.9rem;color:var(--slate-mid);margin-bottom:16px">Enter any two medications — prescription, over-the-counter, or supplements — to check for interactions.</p>
-        <div class="form-group"><label>Medication 1</label>
-          <input id="drug-a" placeholder="e.g. Metformin, Aspirin, Ibuprofen…" list="drug-a-list">
-          <datalist id="drug-a-list"></datalist>
-        </div>
-        <div class="form-group"><label>Medication 2</label>
-          <input id="drug-b" placeholder="e.g. Lisinopril, Warfarin, Vitamin D…" list="drug-b-list">
-          <datalist id="drug-b-list"></datalist>
-        </div>
-        <button class="btn btn-primary" id="check-two-btn" style="width:100%" onclick="checkTwoMeds()">⚗️ Check Interaction</button>
-        <div id="two-med-result" style="margin-top:16px"></div>
-      </div>
-      <div class="card">
-        <div class="card-title">ℹ️ How to Use</div>
-        <div style="font-size:.88rem;color:var(--slate-mid);line-height:1.9">
-          <strong>Check Two Meds</strong> — type any two medications above and click Check.<br><br>
-          <strong>Check All My Meds</strong> — instantly checks every combination of your saved medications.<br><br>
-          <strong>Important:</strong> This tool provides general information only. Always talk to your doctor or pharmacist before making any changes to your medications.
-        </div>
-        <div style="margin-top:14px;padding:12px;background:var(--amber-pale);border:1.5px solid #FCD34D;border-radius:10px;font-size:.85rem;color:var(--amber)">
-          ⚠️ <strong>Not a substitute for professional advice.</strong> Your pharmacist can check all your medications for free — just ask!
-        </div>
-      </div>
-    </div>
-    <div>
-      <div class="card">
-        <div class="card-title">💊 My Medications — Full Check</div>
-        <div id="my-meds-interaction-list" style="margin-bottom:14px"></div>
-        <div id="all-meds-result"></div>
-      </div>
-    </div>
-  </div>
-</div>
-<div id="section-summary" class="section">
-  <div class="page-header"><div><div class="page-title">📄 Health Summary</div><div class="page-sub">A complete printable health report for your doctor</div></div><button class="btn btn-primary" onclick="printHealthSummary()">🖨️ Print / Save as PDF</button></div>
-  <div class="grid-2">
-    <div class="card"><div class="card-title">📋 What's Included</div>
-      <div style="font-size:.9rem;line-height:2;color:var(--slate-mid)">✅ Patient profile & contact info<br>✅ Current medications with dosages<br>✅ Upcoming appointments<br>✅ Recent vitals (last 14 days)<br>✅ Symptom log<br>✅ Insurance information<br>✅ Emergency contacts</div>
-      <button class="btn btn-primary" style="margin-top:18px;width:100%" onclick="printHealthSummary()">🖨️ Print / Save as PDF</button>
-      <p style="font-size:.78rem;color:var(--slate-light);margin-top:10px">Choose "Save as PDF" in the print dialog.</p></div>
-    <div class="card"><div class="card-title">👁 Preview</div><div id="summary-preview" style="font-size:.85rem;color:var(--slate-mid);line-height:1.8"></div></div>
-  </div>
-</div>
-
-<!-- EMERGENCY QR -->
-<div id="section-qr" class="section">
-  <div class="page-header"><div><div class="page-title">🆘 Emergency QR Card</div><div class="page-sub">A scannable card first responders can use in an emergency</div></div>
-    <div style="display:flex;gap:10px"><button class="btn btn-secondary" onclick="printQrCard()">🖨️ Print Card</button><button class="btn btn-primary" onclick="generateQrCard()">🔄 Generate</button></div></div>
-  <div class="grid-2">
-    <div class="card" style="text-align:center"><div class="card-title" style="justify-content:center">📱 Scan for Emergency Info</div>
-      <div id="qr-container" style="margin:16px auto;width:fit-content"></div>
-      <p style="font-size:.85rem;color:var(--slate-light);margin-top:12px">Encodes your name, medications, vitals, and emergency contacts. No internet needed to scan.</p>
-      <button class="btn btn-primary" style="margin-top:14px;width:100%" onclick="generateQrCard()">Generate My QR Card</button></div>
-    <div>
-      <div class="card" style="margin-bottom:16px"><div class="card-title">📋 Card Contents</div><div id="qr-preview" style="font-size:.88rem;line-height:1.9;color:var(--slate-mid)">Generate your card to see a preview.</div></div>
-      <div class="scam-alert green"><strong>✅ Completely private</strong><div style="font-size:.85rem;margin-top:6px">Generated entirely on your device. No data sent to any server.</div></div>
-    </div>
-  </div>
-</div>
-
-<!-- CAREGIVER -->
-<div id="section-caregiver" class="section">
-  <div class="page-header"><div><div class="page-title">👁 Caregiver Mode</div><div class="page-sub">Give a trusted helper read-only access to health information</div></div></div>
-
-  <!-- What is Caregiver Mode explainer -->
-  <div class="card" style="margin-bottom:16px;border-left:4px solid #7C3AED">
-    <div class="card-title" style="color:#7C3AED">What is Caregiver Mode?</div>
-    <p style="font-size:.9rem;color:var(--slate-mid);line-height:1.75;margin-bottom:14px">
-      Caregiver Mode gives a <strong>home health aide, CNA, family member, or trusted helper</strong> a simplified view of your health information — without being able to change, add, or delete anything.
-    </p>
-    <p style="font-size:.9rem;color:var(--slate-mid);line-height:1.75;margin-bottom:14px">
-      You create a separate <strong>4-digit Caregiver PIN</strong>. Hand your phone to the caregiver and they enter that PIN to view your information. Your main PIN stays private — the caregiver never sees it.
-    </p>
-    <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:4px">
-      <div style="background:var(--teal-pale);border-radius:10px;padding:12px;font-size:.85rem;color:var(--teal)">
-        <strong style="display:block;margin-bottom:6px">✅ Caregiver can see:</strong>
-        Today's medications &amp; checklist<br>
-        Upcoming appointments<br>
-        Recent vitals summary<br>
-        Emergency contacts<br>
-        Allergies &amp; conditions
-      </div>
-      <div style="background:var(--rose-pale,#FFF1F2);border-radius:10px;padding:12px;font-size:.85rem;color:var(--rose,#BE123C)">
-        <strong style="display:block;margin-bottom:6px">🚫 Caregiver cannot:</strong>
-        Add or edit any data<br>
-        Delete medications or records<br>
-        Change settings or PIN<br>
-        Access AI assistant<br>
-        Export or share data
-      </div>
-    </div>
-  </div>
-
-  <div class="grid-2">
-    <div>
-      <!-- Step 1: Set up PIN -->
-      <div class="card" style="margin-bottom:16px">
-        <div class="card-title">🔐 Step 1 — Set Your Caregiver PIN</div>
-        <p style="font-size:.87rem;color:var(--slate-mid);margin-bottom:14px;line-height:1.6">Create a 4-digit PIN for your caregiver. This is <strong>different from your main PIN</strong> — your caregiver uses this to open the read-only view.</p>
-        <div class="form-group">
-          <label>New Caregiver PIN (4 digits)</label>
-          <input type="password" id="cg-pin-input" maxlength="4" placeholder="e.g. 1234" style="letter-spacing:.3em;font-size:1.4rem;text-align:center;width:140px">
-        </div>
-        <div id="cg-pin-status" style="font-size:.82rem;color:var(--slate-light);margin-bottom:12px"></div>
-        <button class="btn btn-secondary" onclick="saveCaregiverPin()">💾 Save Caregiver PIN</button>
-      </div>
-
-      <!-- Step 2: Enter caregiver view -->
-      <div class="card" style="margin-bottom:16px">
-        <div class="card-title">👁 Step 2 — Enter Caregiver View</div>
-        <p style="font-size:.87rem;color:var(--slate-mid);margin-bottom:14px;line-height:1.6">Hand your phone to your caregiver. They enter the Caregiver PIN to access the read-only view. <strong>Your main PIN stays completely private.</strong></p>
-        <div class="form-group">
-          <label>Enter Caregiver PIN to activate</label>
-          <input type="password" id="cg-pin-enter" maxlength="4" placeholder="Enter PIN" style="letter-spacing:.3em;font-size:1.4rem;text-align:center;width:140px">
-        </div>
-        <button class="btn btn-purple" onclick="enterCaregiverMode()" style="background:#7C3AED;border:none;color:white">👁 Activate Caregiver View</button>
-      </div>
-
-      <!-- How to exit -->
-      <div class="card" style="background:var(--amber-pale);border:1.5px solid #FCD34D">
-        <div class="card-title" style="color:var(--amber)">⚠️ How to Exit Caregiver Mode</div>
-        <p style="font-size:.87rem;color:var(--amber);line-height:1.6">When Caregiver Mode is active an <strong>Exit</strong> button appears in a purple banner at the top of every screen. Tap it to return to the full app. You will be asked for your <strong>main PIN</strong> to confirm it is you.</p>
-      </div>
-    </div>
-
-    <!-- Live preview -->
-    <div class="card" style="align-self:start">
-      <div class="card-title">👁 Preview — What the Caregiver Sees</div>
-      <p style="font-size:.82rem;color:var(--slate-light);margin-bottom:14px">This is the simplified view your caregiver will see when they activate Caregiver Mode.</p>
-      <div id="cg-preview">
-        <div style="text-align:center;padding:24px;color:var(--slate-light);font-size:.88rem">
-          <div style="font-size:1.8rem;margin-bottom:8px">👁</div>
-          Save a Caregiver PIN above to see a preview of the caregiver view.
-        </div>
-      </div>
-    </div>
-  </div>
-</div>
-
-<!-- FAMILY LOOP -->
-<div id="section-family" class="section">
-  <div class="page-header"><div><div class="page-title">👨‍👩‍👧 Family Loop</div><div class="page-sub">Trusted people who can view your health and schedule</div></div>
-  <div style="display:flex;gap:8px;flex-wrap:wrap">
-    <button class="btn btn-secondary" onclick="openDailySummary()">📋 Daily Summary</button>
-    <button class="btn btn-primary" onclick="openAddFamily()">+ Add Member</button>
-  </div></div>
-  <div class="grid-2">
-    <div id="family-list-area"></div>
-    <div class="card" style="align-self:start"><div class="card-title">ℹ️ About Family Loop</div>
-      <p style="font-size:.9rem;color:var(--slate-mid);line-height:1.7">Keeps loved ones informed without taking away your independence.<br><br><strong>Full View</strong> — Meds, appointments, health log.<br><strong>Appointments Only</strong> — Just upcoming visits.<br><strong>Emergency Only</strong> — Emergency contact only.</p>
-      <div style="margin-top:14px;padding:12px;background:var(--teal-pale);border-radius:10px;font-size:.85rem;color:var(--teal)">🔐 Family members can view but never change your information.</div></div>
-  </div>
-</div>
-
-<!-- CONTACTS -->
-<div id="section-contacts" class="section">
-  <div class="page-header"><div><div class="page-title">📞 Contacts</div><div class="page-sub">Important people and services — always one tap away</div></div><button class="btn btn-primary no-caregiver" onclick="addContact()">+ Add Contact</button></div>
-  <div id="contacts-area"></div>
-</div>
-
-
-
-<!-- PROFILES -->
-<div id="section-profiles" class="section">
-  <div class="page-header"><div><div class="page-title">👥 Profiles</div><div class="page-sub">Manage health data for multiple people on one device</div></div><button class="btn btn-primary" onclick="openModal('profile-modal')">+ Add Profile</button></div>
-  <div class="grid-3" id="profiles-grid"></div>
-  <div class="card" style="margin-top:18px"><div class="card-title">ℹ️ About Profiles</div><p style="font-size:.9rem;color:var(--slate-mid);line-height:1.7">Each profile has its own completely separate medications, appointments, health log, and documents. Great for couples or anyone managing care for a family member.</p></div>
-</div>
-
-<!-- SETTINGS -->
-<div id="section-settings" class="section">
-  <div class="page-header"><div><div class="page-title">⚙️ Settings</div><div class="page-sub">Customize your Tended Health experience</div></div></div>
-  <div class="grid-2">
-    <div class="card"><div class="card-title">👤 My Profile</div>
-      <div class="form-group"><label>Your Name</label><input type="text" id="set-name" placeholder="e.g. Dorothy Williams"></div>
-      <div class="form-group"><label>Date of Birth</label><input type="date" id="set-dob"></div>
-      <div class="form-group"><label>Primary Phone</label><input type="tel" id="set-phone" placeholder="(555) 000-0000"></div>
-      <div class="form-group"><label>Your Doctor</label><input type="text" id="set-doc" placeholder="e.g. Dr. Sarah Chen"></div>
-      <div class="form-group"><label>Blood Type</label>
-        <select id="set-blood" style="border:1.5px solid var(--border);border-radius:8px;padding:10px 12px;font-size:.95rem;font-family:'DM Sans',sans-serif;color:var(--slate);background:var(--white);width:100%">
-          <option value="">-- Select --</option>
-          <option>A+</option><option>A−</option><option>B+</option><option>B−</option>
-          <option>AB+</option><option>AB−</option><option>O+</option><option>O−</option><option>Unknown</option>
-        </select>
-      </div>
-      <button class="btn btn-primary" style="width:100%;justify-content:center" onclick="saveSettings()">Save Profile</button>
-    </div>
-
-    <!-- Allergies card -->
-    <div class="card" style="margin-top:16px">
-      <div class="card-title" style="color:var(--rose)">⚠️ Allergies</div>
-      <div style="background:var(--rose-pale);border:1.5px solid #FECACA;border-radius:10px;padding:10px 14px;font-size:.82rem;color:var(--rose);margin-bottom:14px;line-height:1.55">
-        🆘 <strong>Emergency info.</strong> Shown on your QR card and Doctor Summary so first responders and doctors are immediately aware.
-      </div>
-
-      <!-- Live preview pills -->
-      <div id="allergy-preview" style="display:none;margin-bottom:14px">
-        <div style="font-size:.75rem;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--slate-light);margin-bottom:6px">Currently saved:</div>
-        <div class="allergy-display" id="allergy-pills"></div>
-      </div>
-
-      <div class="form-group">
-        <label>💊 Drug Allergies</label>
-        <textarea id="set-drug-allergies" rows="2" placeholder="e.g. Penicillin, Sulfa drugs, Aspirin…" style="resize:vertical" oninput="previewAllergies()"></textarea>
-      </div>
-      <div class="form-group">
-        <label>🍽️ Food Allergies</label>
-        <textarea id="set-food-allergies" rows="2" placeholder="e.g. Peanuts, Shellfish, Dairy…" style="resize:vertical" oninput="previewAllergies()"></textarea>
-      </div>
-      <div class="form-group">
-        <label>🌿 Other Allergies / Sensitivities</label>
-        <textarea id="set-other-allergies" rows="2" placeholder="e.g. Latex, Bee stings, Contrast dye…" style="resize:vertical" oninput="previewAllergies()"></textarea>
-      </div>
-      <button class="btn btn-primary" style="width:100%;justify-content:center;background:var(--rose);border-color:var(--rose)" onclick="saveAllergies()">Save Allergies</button>
-    </div>
-
-    <!-- Medical Conditions card -->
-    <div class="card" style="margin-top:16px">
-      <div class="card-title" style="color:var(--amber)">🏥 Medical Conditions</div>
-      <div style="background:var(--amber-pale);border:1.5px solid #FCD34D;border-radius:10px;padding:10px 14px;font-size:.82rem;color:var(--amber);margin-bottom:14px;line-height:1.55">
-        📋 <strong>Included in your Doctor Summary and Emergency QR Card.</strong> Helps doctors understand your full health picture at a glance.
-      </div>
-
-      <!-- Live preview pills -->
-      <div id="conditions-preview" style="display:none;margin-bottom:14px">
-        <div style="font-size:.75rem;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--slate-light);margin-bottom:6px">Currently saved:</div>
-        <div class="allergy-display" id="condition-pills"></div>
-      </div>
-
-      <div class="form-group">
-        <label>Existing Conditions</label>
-        <textarea id="set-conditions" rows="3" placeholder="e.g. Type 2 Diabetes, Hypertension, Atrial fibrillation, Osteoarthritis" style="resize:vertical" oninput="previewConditions()"></textarea>
-      </div>
-      <div class="form-group">
-        <label>Blood Type</label>
-        <select id="set-blood-type" style="font-family:'DM Sans',sans-serif;border:1.5px solid var(--border);border-radius:8px;padding:10px 12px;font-size:.92rem;color:var(--slate);width:100%">
-          <option value="">-- Unknown --</option>
-          <option>A+</option><option>A-</option>
-          <option>B+</option><option>B-</option>
-          <option>AB+</option><option>AB-</option>
-          <option>O+</option><option>O-</option>
-        </select>
-      </div>
-      <div class="form-group">
-        <label>Surgeries / Major Procedures</label>
-        <textarea id="set-surgeries" rows="2" placeholder="e.g. Hip replacement 2019, Appendectomy 2005" style="resize:vertical"></textarea>
-      </div>
-      <button class="btn btn-primary" style="width:100%;justify-content:center" onclick="saveConditions()">Save Medical Info</button>
-    </div>
-    <div>
-      <div class="card" style="margin-bottom:16px"><div class="card-title">🎨 Display Mode</div>
-        <div style="display:flex;flex-direction:column;gap:10px;font-size:.92rem">
-          <label style="display:flex;align-items:center;gap:10px;cursor:pointer"><input type="checkbox" id="toggle-dark" onchange="applyDisplayMode()"> 🌙 Dark mode</label>
-          <label style="display:flex;align-items:center;gap:10px;cursor:pointer"><input type="checkbox" id="toggle-large" onchange="applyDisplayMode()"> 🔤 Large text</label>
-          <label style="display:flex;align-items:center;gap:10px;cursor:pointer"><input type="checkbox" id="toggle-contrast" onchange="applyDisplayMode()"> ⚡ High contrast</label>
-        </div></div>
-
-      <div class="card" style="margin-bottom:16px">
-        <div class="card-title">🎓 Feature Tour</div>
-        <p style="font-size:.88rem;color:var(--slate-light);margin-bottom:14px;line-height:1.6">Replay the guided tour to rediscover what each section of Tended Health does.</p>
-        <button class="btn btn-secondary btn-sm" onclick="localStorage.removeItem(TOUR_KEY); tourStart();">▶ Replay Tour</button>
-      </div>
-      <div class="card" style="margin-bottom:16px"><div class="card-title">🔒 PIN Lock</div>
-        <div id="pin-lock-status" style="font-size:.85rem;font-weight:600;margin-bottom:12px"></div>
-        <p style="font-size:.88rem;color:var(--slate-light);margin-bottom:14px">Optional — most users don't need a PIN since all data stays on your device. Only useful if others share your phone.</p>
-        <div style="display:flex;gap:10px;flex-wrap:wrap">
-          <button class="btn btn-secondary btn-sm" onclick="changePinFlow()">🔑 Set / Change PIN</button>
-          <button class="btn btn-secondary btn-sm" onclick="bioSetup()">👆 Enable Biometric</button>
-          <button class="btn btn-danger btn-sm" onclick="disablePin()" id="disable-pin-btn">🔓 Remove PIN</button>
-        </div>
-        <div style="margin-top:14px;display:flex;align-items:center;gap:12px;flex-wrap:wrap">
-          <label style="font-size:.88rem;color:var(--slate-mid);white-space:nowrap">⏱️ Auto-lock after</label>
-          <select id="lock-timeout-sel" onchange="saveLockTimeout(this.value)" style="border:1.5px solid var(--border);border-radius:8px;padding:6px 10px;font-size:.88rem;font-family:'DM Sans',sans-serif;color:var(--slate);background:var(--white)">
-            <option value="5">5 minutes</option>
-            <option value="10" selected>10 minutes</option>
-            <option value="20">20 minutes</option>
-            <option value="30">30 minutes</option>
-            <option value="60">1 hour</option>
-            <option value="0">Never (while app is open)</option>
-          </select>
-        </div></div>
-      <div class="card" style="margin-bottom:16px">
-        <div class="card-title">🤖 AI Features & API Key</div>
-        <div id="key-status" style="font-size:.85rem;font-weight:600;margin-bottom:10px"></div>
-        <p style="font-size:.84rem;color:var(--slate-light);margin-bottom:12px;line-height:1.6">
-          AI features require a free personal API key from Anthropic. New accounts include <strong>$5 free credit</strong> — enough for hundreds of queries. Most users never pay anything.
-        </p>
-        <div style="display:flex;gap:10px;flex-wrap:wrap">
-          <button class="btn btn-primary btn-sm" onclick="showApiKeyPrompt()">🔑 Set Up API Key</button>
-          <button class="btn btn-danger btn-sm" onclick="clearApiKey();renderKeyStatus()">Remove Key</button>
-        </div>
-        <div style="margin-top:12px;background:var(--cream);border-radius:10px;padding:10px 12px;font-size:.80rem;color:var(--slate-mid);line-height:1.65">
-          📋 <strong>Quick steps:</strong> Go to <strong>console.anthropic.com</strong> → Sign Up free → API Keys → Create Key → Copy and paste it here
-        </div>
-      </div>
-      <div class="card"><div class="card-title">💾 Data & Transfer</div>
-
-        <!-- What is stored -->
-        <div style="background:var(--teal-pale);border:1.5px solid var(--teal-mid);border-radius:12px;padding:14px 16px;margin-bottom:14px">
-          <div style="font-size:.82rem;font-weight:700;color:var(--teal);margin-bottom:8px">📦 What gets saved in your backup:</div>
-          <div style="display:grid;grid-template-columns:1fr 1fr;gap:4px 12px;font-size:.82rem;color:var(--teal)">
-            <div>✓ All medications &amp; schedule</div>
-            <div>✓ Appointments</div>
-            <div>✓ Health log &amp; vitals</div>
-            <div>✓ Symptoms</div>
-            <div>✓ Insurance claims</div>
-            <div>✓ Emergency contacts</div>
-            <div>✓ Family Loop members</div>
-            <div>✓ Documents &amp; cards</div>
-            <div>✓ Settings &amp; preferences</div>
-            <div>✓ All profiles</div>
-          </div>
-        </div>
-
-        <!-- Export button -->
-        <div style="margin-bottom:14px">
-          <div style="font-size:.84rem;font-weight:700;color:var(--slate);margin-bottom:6px">📤 Export — Create a Backup</div>
-          <p style="font-size:.82rem;color:var(--slate-light);margin-bottom:10px;line-height:1.6">Creates a <strong>tended-backup.json</strong> file saved to your phone. Export regularly — especially before getting a new phone or clearing your browser.</p>
-          <button class="btn btn-primary btn-sm" onclick="exportData()" style="width:100%;justify-content:center">📤 Export All Data (Backup)</button>
-        </div>
-
-        <!-- Import button -->
-        <div style="margin-bottom:14px">
-          <div style="font-size:.84rem;font-weight:700;color:var(--slate);margin-bottom:6px">📥 Import — Restore a Backup</div>
-          <p style="font-size:.82rem;color:var(--slate-light);margin-bottom:10px;line-height:1.6">Select a <strong>tended-backup.json</strong> file to restore all your data. Everything comes back exactly as it was.</p>
-          <button class="btn btn-secondary btn-sm" onclick="document.getElementById('import-file-input').click()" style="width:100%;justify-content:center">📥 Import Backup File</button>
-          <input type="file" id="import-file-input" accept=".json" style="display:none" onchange="importData(this)">
-          <div id="import-status" style="display:none;font-size:.84rem;border-radius:10px;padding:10px 14px;margin-top:8px"></div>
-        </div>
-
-        <!-- Transfer to new phone -->
-        <div style="background:var(--indigo-pale,#EEF2FF);border:1.5px solid #C7D2FE;border-radius:12px;padding:14px 16px;margin-bottom:14px">
-          <div style="font-size:.83rem;font-weight:700;color:#4338CA;margin-bottom:10px">📱 How to Transfer to a New Phone</div>
-          <div style="display:flex;flex-direction:column;gap:8px">
-            <div style="display:flex;gap:10px;align-items:flex-start;font-size:.82rem;color:#4338CA">
-              <span style="background:#4338CA;color:white;border-radius:50%;width:20px;height:20px;display:flex;align-items:center;justify-content:center;font-size:.7rem;font-weight:700;flex-shrink:0">1</span>
-              <span>On your <strong>old phone</strong> — tap <strong>Export All Data</strong> above. A file called <em>tended-backup.json</em> saves to your downloads.</span>
-            </div>
-            <div style="display:flex;gap:10px;align-items:flex-start;font-size:.82rem;color:#4338CA">
-              <span style="background:#4338CA;color:white;border-radius:50%;width:20px;height:20px;display:flex;align-items:center;justify-content:center;font-size:.7rem;font-weight:700;flex-shrink:0">2</span>
-              <span>Send the file to yourself — email it to <strong>tendedhealthapps@gmail.com</strong> or upload it to <strong>Google Drive</strong>.</span>
-            </div>
-            <div style="display:flex;gap:10px;align-items:flex-start;font-size:.82rem;color:#4338CA">
-              <span style="background:#4338CA;color:white;border-radius:50%;width:20px;height:20px;display:flex;align-items:center;justify-content:center;font-size:.7rem;font-weight:700;flex-shrink:0">3</span>
-              <span>On your <strong>new phone</strong> — download Tended Health from Google Play. Open the app and complete setup.</span>
-            </div>
-            <div style="display:flex;gap:10px;align-items:flex-start;font-size:.82rem;color:#4338CA">
-              <span style="background:#4338CA;color:white;border-radius:50%;width:20px;height:20px;display:flex;align-items:center;justify-content:center;font-size:.7rem;font-weight:700;flex-shrink:0">4</span>
-              <span>Go to <strong>Settings → Import Backup File</strong>. Select your <em>tended-backup.json</em> file. Everything restores instantly.</span>
-            </div>
-          </div>
-        </div>
-
-        <!-- Important warning -->
-        <div style="background:#FFF7ED;border:1.5px solid #FED7AA;border-radius:12px;padding:12px 14px;margin-bottom:14px">
-          <div style="font-size:.82rem;font-weight:700;color:#C2410C;margin-bottom:6px">⚠️ Important — Data is Stored on This Device Only</div>
-          <p style="font-size:.81rem;color:#9A3412;line-height:1.65;margin:0">
-            Tended Health stores all data <strong>locally on your device only</strong>. There is no cloud backup. If you delete the app, clear your browser storage, or get a new phone <strong>without exporting first</strong>, your data <strong>cannot be recovered</strong>.<br><br>
-            <strong>We recommend exporting once a month</strong> and saving the file to Google Drive or emailing it to yourself.
-          </p>
-        </div>
-
-        <!-- When to export reminders -->
-        <div style="font-size:.82rem;color:var(--slate-mid);margin-bottom:14px;line-height:1.8">
-          <strong style="display:block;margin-bottom:4px;color:var(--slate)">🗓️ Export before you:</strong>
-          · Get a new Android phone &nbsp;·&nbsp; Clear browser or app data<br>
-          · Reinstall the app &nbsp;·&nbsp; Update to a new version<br>
-          · Travel away from home for extended periods
-        </div>
-
-        <!-- Clear all data — danger zone -->
-        <div style="border-top:1.5px solid var(--border);padding-top:14px">
-          <div style="font-size:.82rem;font-weight:700;color:var(--rose,#BE123C);margin-bottom:6px">🗑️ Danger Zone</div>
-          <p style="font-size:.81rem;color:var(--slate-light);margin-bottom:10px;line-height:1.6">This permanently deletes all your health data from this device. Export a backup first.</p>
-          <button class="btn btn-danger btn-sm" onclick="clearAllData()" style="justify-content:center;width:100%">🗑️ Clear All Data — Cannot Be Undone</button>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <!-- Version + Privacy -->
-  <div style="margin-top:28px;padding:20px 0;border-top:1px solid var(--border);text-align:center">
-    <div style="font-size:.82rem;font-weight:700;color:var(--slate-light);margin-bottom:6px">
-      Tended Health &nbsp;·&nbsp; Version 1.0.0
-    </div>
-    <div id="unlock-status-display" style="margin-bottom:14px;font-size:.82rem"></div>
-    <div style="background:var(--cream);border:1.5px solid var(--border);border-radius:14px;padding:18px 20px;text-align:left;max-width:560px;margin:0 auto">
-      <div style="font-weight:700;font-size:.92rem;color:var(--slate);margin-bottom:10px">🔐 Privacy Statement</div>
-      <p style="font-size:.84rem;color:var(--slate-mid);line-height:1.75;margin-bottom:10px">
-        Tended is designed with your privacy as the first priority. <strong>All of your health data is stored exclusively on your device</strong> — in your browser's local storage. Nothing is ever transmitted to a server, shared with third parties, or stored in the cloud.
-      </p>
-      <p style="font-size:.84rem;color:var(--slate-mid);line-height:1.75;margin-bottom:10px">
-        The app does not collect analytics, does not use cookies, and does not require an account or email address. The only network request the app makes is to the Anthropic AI API — and only when you use the AI Assistant or Drug Interaction Checker features, using an API key you provide yourself.
-      </p>
-      <p style="font-size:.84rem;color:var(--slate-mid);line-height:1.75">
-        You can export all your data at any time from <strong>Settings → Data & Transfer</strong>. Clearing your browser data or uninstalling the app permanently removes all stored information.
-      </p>
-    </div>
-    <div style="margin-top:14px;font-size:.78rem;color:var(--slate-light)">
-      Built with care · Your health, your data, your control
-    </div>
-  </div>
-
-  <!-- Get the Android app -->
-  <div style="margin-top:24px;padding:20px 0;border-top:1px solid var(--border);text-align:center">
-    <div style="background:linear-gradient(135deg,#0F766E,#1E293B);border-radius:16px;padding:22px 24px;max-width:560px;margin:0 auto;text-align:left;position:relative;overflow:hidden">
-      <div style="position:absolute;right:20px;top:50%;transform:translateY(-50%);font-size:3.5rem;opacity:.15">📱</div>
-      <div style="font-size:.72rem;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:rgba(255,255,255,.55);margin-bottom:6px">Available on Google Play</div>
-      <div style="font-family:'Lora',Georgia,'Times New Roman',serif;font-size:1.15rem;font-weight:700;color:white;margin-bottom:6px">Enjoying Tended Health?</div>
-      <div style="font-size:.85rem;color:rgba(255,255,255,.75);line-height:1.65;margin-bottom:16px">
-        The Android app installs directly to your home screen, works fully offline, and is free to try for 7 days — then $4.99 one-time to unlock — no subscription, no recurring charges.
-      </div>
-      <div style="display:flex;align-items:center;gap:14px;flex-wrap:wrap">
-        <div style="background:rgba(255,255,255,.15);border:1.5px solid rgba(255,255,255,.3);border-radius:10px;padding:8px 16px;text-align:center">
-          <div style="font-size:.7rem;color:rgba(255,255,255,.6);font-weight:700">FREE TO TRY</div>
-          <div style="font-size:1.2rem;font-weight:800;color:white">$4.99</div>
-          <div style="font-size:.68rem;color:rgba(255,255,255,.6);font-weight:600">TO UNLOCK</div>
-        </div>
-        <a href="https://play.google.com/store/apps/details?id=app.tended.health" target="_blank" rel="noopener"
-           style="background:white;color:var(--teal);border-radius:10px;padding:10px 20px;font-size:.88rem;font-weight:700;text-decoration:none;font-family:'DM Sans',sans-serif;display:inline-flex;align-items:center;gap:7px;transition:all .18s"
-           onmouseover="this.style.background='#CCFBF1'" onmouseout="this.style.background='white'">
-          ▶ Get it on Google Play
-        </a>
-      </div>
-      <div style="margin-top:12px;font-size:.75rem;color:rgba(255,255,255,.4)">
-        Already on Google Play? Reinstall free on any Android device you own.
-      </div>
-    </div>
-  </div>
-
-</div>
-
-</div><!-- content -->
-</div><!-- body-area -->
-</div><!-- shell -->
-
-<!-- MODALS -->
-<div class="overlay" id="med-modal"><div class="modal">
-  <h2 id="med-modal-title">💊 Add Medication</h2>
-  <div class="form-group"><label>Name *</label><input id="m-name" placeholder="Metformin 500mg"></div>
-  <div class="form-row">
-    <div class="form-group"><label>Dosage</label><input id="m-dose" placeholder="500 mg"></div>
-    <div class="form-group"><label>Frequency</label>
-      <select id="m-freq">
-        <option>Once daily</option><option>Twice daily</option><option>Three times daily</option>
-        <option>With meals</option><option>As needed</option><option>Weekly</option>
-      </select>
-    </div>
-  </div>
-  <div class="form-row">
-    <div class="form-group"><label>Time(s)</label><input id="m-time" placeholder="8:00 AM"></div>
-    <div class="form-group"><label>Refill Date</label><input type="date" id="m-refill"></div>
-  </div>
-  <div class="form-group"><label>Doctor</label><input id="m-doctor" placeholder="Dr. Chen"></div>
-  <div class="form-group"><label>Instructions</label><textarea id="m-notes" rows="2" placeholder="Take with food…"></textarea></div>
-  <div class="modal-actions">
-    <button class="btn btn-secondary" onclick="medModalCancel()">Cancel</button>
-    <button class="btn btn-primary" id="med-modal-save-btn" onclick="medModalSave()">Save</button>
-  </div>
-</div></div>
-
-<div class="overlay" id="appt-modal"><div class="modal">
-  <h2 id="appt-modal-title">📅 Add Appointment</h2>
-  <div class="form-group"><label>Doctor / Provider *</label><input id="a-name" placeholder="Dr. Sarah Johnson"></div>
-  <div class="form-group"><label>Specialty</label><input id="a-type" placeholder="Cardiologist, Annual Check-up"></div>
-  <div class="form-row">
-    <div class="form-group"><label>Date *</label><input type="date" id="a-date"></div>
-    <div class="form-group"><label>Time</label><input type="time" id="a-time"></div>
-  </div>
-  <div class="form-group"><label>Location</label><input id="a-loc" placeholder="400 Medical Plaza"></div>
-  <div class="form-group"><label>Phone</label><input type="tel" id="a-phone"></div>
-  <div class="form-group"><label>Prep Notes</label><textarea id="a-notes" rows="2" placeholder="Bring insurance card…"></textarea></div>
-  <div class="form-group"><label>Transportation</label>
-    <select id="a-transport">
-      <option value="">-- Select --</option>
-      <option>Driving myself</option><option>Family member driving</option>
-      <option>Medical transport</option><option>Rideshare / Taxi</option><option>Bus / Transit</option>
-    </select>
-  </div>
-  <div class="modal-actions">
-    <button class="btn btn-secondary" onclick="apptModalCancel()">Cancel</button>
-    <button class="btn btn-primary" id="appt-modal-save-btn" onclick="apptModalSave()">Save</button>
-  </div>
-</div></div>
-
-<div class="overlay" id="health-modal"><div class="modal">
-  <h2 id="health-modal-title">❤️ Log Health Entry</h2>
-  <div class="form-group"><label>Date</label><input type="date" id="h-date"></div>
-  <div class="form-row"><div class="form-group"><label>Blood Pressure</label><input id="h-bp" placeholder="120/80"></div><div class="form-group"><label>Heart Rate (bpm)</label><input type="number" id="h-hr" placeholder="72"></div></div>
-  <div class="form-row"><div class="form-group"><label>Weight (lbs)</label><input type="number" id="h-wt" placeholder="158"></div><div class="form-group"><label>Blood Sugar (mg/dL)</label><input type="number" id="h-bs" placeholder="95"></div></div>
-  <div class="form-row"><div class="form-group"><label>Temperature (°F)</label><input type="number" id="h-temp" placeholder="98.6" step="0.1"></div><div class="form-group"><label>Oxygen (%)</label><input type="number" id="h-o2" placeholder="97"></div></div>
-  <div class="form-group"><label>Overall Feeling</label><select id="h-feel"><option value="">-- How do you feel? --</option><option value="5">😄 Great</option><option value="4">🙂 Good</option><option value="3">😐 Okay</option><option value="2">😕 Not great</option><option value="1">😞 Rough day</option></select></div>
-  <div class="form-group"><label>Notes</label><textarea id="h-notes" rows="2" placeholder="Anything unusual…"></textarea></div>
-  <div class="modal-actions"><button class="btn btn-secondary" onclick="healthModalCancel()">Cancel</button><button class="btn btn-primary" id="health-modal-save-btn" onclick="healthModalSave()">Save</button></div>
-</div></div>
-
-<div class="overlay" id="symptom-modal"><div class="modal">
-  <h2 id="symptom-modal-title">🌡️ Log Symptom</h2>
-  <div class="form-group"><label>Date & Time</label><input type="datetime-local" id="sy-dt"></div>
-  <div class="form-group"><label>Symptoms</label><div id="symptom-chips" style="margin-top:6px">
-    <span class="symptom-chip" onclick="toggleSymptom(this)">😴 Fatigue</span><span class="symptom-chip" onclick="toggleSymptom(this)">🤕 Headache</span><span class="symptom-chip" onclick="toggleSymptom(this)">💨 Shortness of breath</span><span class="symptom-chip" onclick="toggleSymptom(this)">💔 Chest pain</span><span class="symptom-chip" onclick="toggleSymptom(this)">🤢 Nausea</span><span class="symptom-chip" onclick="toggleSymptom(this)">🤸 Dizziness</span><span class="symptom-chip" onclick="toggleSymptom(this)">🦵 Joint pain</span><span class="symptom-chip" onclick="toggleSymptom(this)">🤧 Congestion</span><span class="symptom-chip" onclick="toggleSymptom(this)">🔥 Fever</span><span class="symptom-chip" onclick="toggleSymptom(this)">😴 Insomnia</span><span class="symptom-chip" onclick="toggleSymptom(this)">🍽️ Poor appetite</span><span class="symptom-chip" onclick="toggleSymptom(this)">😟 Anxiety</span>
-  </div></div>
-  <div class="form-group"><label>Other</label><input id="sy-other" placeholder="Back pain, rash…"></div>
-  <div class="form-group"><label>Severity</label><div style="display:flex;gap:6px;margin-top:10px"><button class="sev-btn s1" onclick="selectSev(this,'mild')">Mild</button><button class="sev-btn s2" onclick="selectSev(this,'moderate')">Moderate</button><button class="sev-btn s3" onclick="selectSev(this,'severe')">Severe</button></div></div>
-  <div class="form-group"><label>Notes</label><textarea id="sy-notes" rows="2" placeholder="When did it start?"></textarea></div>
-  <div class="modal-actions"><button class="btn btn-secondary" onclick="symModalCancel()">Cancel</button><button class="btn btn-primary" id="symptom-modal-save-btn" onclick="symModalSave()">Log</button></div>
-</div></div>
-
-<div class="overlay" id="claim-modal"><div class="modal"><h2 id="claim-modal-title">📋 Add Insurance Claim</h2>
-  <div class="form-group"><label>Description *</label><input id="cl-desc" placeholder="Annual physical…"></div>
-  <div class="form-row"><div class="form-group"><label>Date of Service</label><input type="date" id="cl-date"></div><div class="form-group"><label>Billed Amount ($)</label><input type="number" id="cl-amt" step="0.01"></div></div>
-  <div class="form-row"><div class="form-group"><label>Insurance Provider</label><input id="cl-prov" placeholder="Medicare Part B"></div><div class="form-group"><label>Claim Number</label><input id="cl-num"></div></div>
-  <div class="form-row"><div class="form-group"><label>Status</label><select id="cl-status"><option value="pending">Pending</option><option value="approved">Approved</option><option value="review">Under Review</option><option value="denied">Denied</option></select></div><div class="form-group"><label>Amount Paid ($)</label><input type="number" id="cl-paid" step="0.01"></div></div>
-  <div class="modal-actions"><button class="btn btn-secondary" onclick="closeModal('claim-modal')">Cancel</button><button class="btn btn-primary" id="claim-save-btn" onclick="saveClaim()">Save Claim</button></div>
-</div></div>
-
-<div class="overlay" id="doc-modal"><div class="modal"><h2>📁 Add Document</h2>
-  <div class="form-group"><label>Name *</label><input id="doc-name" placeholder="Medicare Card…"></div>
-  <div class="form-group"><label>Type</label><select id="doc-type"><option>Medicare Card</option><option>Medicaid Card</option><option>Insurance Card</option><option>Living Will / Advance Directive</option><option>Power of Attorney</option><option>Vaccination Record</option><option>Hospital Discharge Summary</option><option>Lab Results</option><option>ID / Driver's License</option><option>Other</option></select></div>
-  <div class="form-row"><div class="form-group"><label>ID / Member Number</label><input id="doc-num" placeholder="1EG4-TE5-MK72"></div><div class="form-group"><label>Expiration Date</label><input type="date" id="doc-exp"></div></div>
-  <div class="form-group"><label>Notes</label><textarea id="doc-notes" rows="2" placeholder="Group number, phone numbers…"></textarea></div>
-  <div class="form-group"><label>📷 Photo (optional)</label>
-    <div class="upload-zone" onclick="document.getElementById('doc-photo-input').click()">
-      <div id="upload-preview" style="pointer-events:none"><div style="font-size:1.8rem;margin-bottom:6px">📷</div><div style="font-size:.88rem;color:var(--slate-mid)">Tap to take photo or upload image</div></div>
-    </div>
-    <input type="file" id="doc-photo-input" accept="image/*" capture="environment" style="display:none" onchange="previewDocPhoto(this)">
-  </div>
-  <div class="modal-actions"><button class="btn btn-secondary" onclick="closeModal('doc-modal');clearDocPhoto()">Cancel</button><button class="btn btn-primary" onclick="addDoc()">Save</button></div>
-</div></div>
-
-<div class="overlay" id="family-modal"><div class="modal"><h2 id="family-modal-title">👨‍👩‍👧 Add Family Member</h2>
-  <div class="form-group"><label>Name *</label><input id="f-name" placeholder="Michael Johnson"></div>
-  <div class="form-row"><div class="form-group"><label>Relationship</label><select id="f-rel"><option>Son</option><option>Daughter</option><option>Spouse</option><option>Partner</option><option>Sibling</option><option>Friend</option><option>Caregiver</option><option>Other</option></select></div><div class="form-group"><label>Phone</label><input type="tel" id="f-phone" placeholder="(555) 000-0000"></div></div>
-  <div class="form-group"><label>Email</label><input type="email" id="f-email"></div>
-  <div class="form-group"><label>Access Level</label><select id="f-access"><option value="all">Full View — Medications, Appointments, Health Log</option><option value="appts">Appointments Only</option><option value="emergency">Emergency Contact Only</option></select></div>
-  <div class="modal-actions"><button class="btn btn-secondary" onclick="closeModal('family-modal')">Cancel</button><button class="btn btn-primary" id="family-save-btn" onclick="saveFamily()">Add Member</button></div>
-</div></div>
-
-<div class="overlay" id="contact-modal"><div class="modal">
-  <h2 id="contact-modal-title">📞 Add Contact</h2>
-  <div class="form-group"><label>Name *</label><input id="co-name" placeholder="Dr. Williams"></div>
-  <div class="form-row">
-    <div class="form-group"><label>Type</label>
-      <select id="co-type">
-        <option>Doctor</option><option>Specialist</option><option>Pharmacy</option>
-        <option>Hospital</option><option>Family</option><option>Neighbor</option>
-        <option>Caregiver</option><option>Other</option>
-      </select>
-    </div>
-    <div class="form-group"><label>Phone *</label><input type="tel" id="co-phone" placeholder="(555) 000-0000"></div>
-  </div>
-  <div class="form-group"><label>Address</label><input id="co-addr"></div>
-  <div class="form-group"><label>Notes</label><input id="co-notes" placeholder="Call after 9am…"></div>
-  <div class="form-group">
-    <label style="display:flex;align-items:center;gap:10px;cursor:pointer;font-size:.92rem">
-      <input type="checkbox" id="co-onqr"> 🆘 Include on Emergency QR Card
-    </label>
-  </div>
-  <div class="modal-actions">
-    <button class="btn btn-secondary" onclick="contactModalCancel()">Cancel</button>
-    <button class="btn btn-primary" id="contact-modal-save-btn" onclick="contactModalSave()">Save</button>
-  </div>
-</div></div>
-
-<div class="overlay" id="profile-modal"><div class="modal"><h2>👤 Add Profile</h2>
-  <div class="form-group"><label>Full Name *</label><input id="prof-name" placeholder="e.g. Robert Williams"></div>
-  <div class="form-group"><label>Relationship</label><select id="prof-rel"><option>Myself</option><option>Spouse / Partner</option><option>Parent</option><option>Sibling</option><option>Other</option></select></div>
-  <div class="form-group"><label>Date of Birth</label><input type="date" id="prof-dob"></div>
-  <div class="form-group"><label>Profile Color</label>
-    <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:4px">
-      <div data-color="#0F766E" style="width:32px;height:32px;border-radius:8px;background:#0F766E;cursor:pointer;border:3px solid white" onclick="selectProfileColor(this)"></div>
-      <div data-color="#4338CA" style="width:32px;height:32px;border-radius:8px;background:#4338CA;cursor:pointer;border:3px solid transparent" onclick="selectProfileColor(this)"></div>
-      <div data-color="#BE123C" style="width:32px;height:32px;border-radius:8px;background:#BE123C;cursor:pointer;border:3px solid transparent" onclick="selectProfileColor(this)"></div>
-      <div data-color="#B45309" style="width:32px;height:32px;border-radius:8px;background:#B45309;cursor:pointer;border:3px solid transparent" onclick="selectProfileColor(this)"></div>
-      <div data-color="#7C3AED" style="width:32px;height:32px;border-radius:8px;background:#7C3AED;cursor:pointer;border:3px solid transparent" onclick="selectProfileColor(this)"></div>
-      <div data-color="#15803D" style="width:32px;height:32px;border-radius:8px;background:#15803D;cursor:pointer;border:3px solid transparent" onclick="selectProfileColor(this)"></div>
-    </div>
-  </div>
-  <div class="modal-actions"><button class="btn btn-secondary" onclick="closeModal('profile-modal')">Cancel</button><button class="btn btn-primary" onclick="addProfile()">Create Profile</button></div>
-</div></div>
-
-<div class="toast" id="toast"></div>
 
 <script>
 function escHtml(s){if(s===null||s===undefined)return '';return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;');}
@@ -3814,8 +2563,11 @@ async function initEncryption(pin){
 }
 async function saveEncrypted(){
   const dataStr = JSON.stringify(D);
-
-  try{ localStorage.setItem(STORE, dataStr); } catch(e){}
+  // Write to correct key: STORE for default profile, tendedV4_id for others
+  const _activeKey = (typeof activeProfileId !== 'undefined' && activeProfileId && activeProfileId !== 'default')
+    ? 'tendedV4_' + activeProfileId
+    : STORE;
+  try{ localStorage.setItem(_activeKey, dataStr); } catch(e){}
 
   idbSet(IDB_KEY, dataStr).catch(()=>{});
 
@@ -4286,10 +3038,15 @@ function addProfile(){
   const id='prof_'+Date.now();
   profiles.push({id,name,rel:document.getElementById('prof-rel').value,dob:document.getElementById('prof-dob').value,color:selProfileColor,created:Date.now()});
   localStorage.setItem('tendedV4_'+id,JSON.stringify({meds:[],appts:[],health:[],symptoms:[],claims:[],docs:[],family:[],contacts:[],settings:{name},medChecks:{},notifications:[],prepChecks:{},checkins:[]}));
-  saveProfiles();closeModal('profile-modal');clearInputs(['prof-name','prof-dob']);renderProfiles();toast('✅ Profile created!','var(--sage)');
+  saveProfiles();closeModal('profile-modal');clearInputs(['prof-name','prof-dob']);renderProfiles();
+  // Switch to new profile immediately then launch setup wizard
+  switchProfile(id);
+  setTimeout(() => psShow(id, name), 400);
 }
 function switchProfile(id){
-  localStorage.setItem('tendedV4_'+activeProfileId,JSON.stringify(D));
+  // Use correct key — default profile saves to STORE, others to tendedV4_id
+  const _saveKey = activeProfileId==='default' ? STORE : 'tendedV4_'+activeProfileId;
+  localStorage.setItem(_saveKey, JSON.stringify(D));
   activeProfileId=id;localStorage.setItem(ACTIVE_PROFILE,id);
   try{const key=id==='default'?STORE:'tendedV4_'+id;const s=localStorage.getItem(key);if(s)D=Object.assign({meds:[],appts:[],health:[],symptoms:[],claims:[],docs:[],family:[],contacts:[],settings:{},medChecks:{},notifications:[],prepChecks:{},checkins:[]},JSON.parse(s));}catch(e){}
   loadSettings();loadDisplayMode();renderAll();
@@ -4804,7 +3561,8 @@ function printQrCard(){
   </div>
 </div>
 
-</body></html>`);
+</body>
+</html>`);
   w.document.close();setTimeout(()=>w.print(),500);
 }
 
@@ -5257,7 +4015,8 @@ function printHealthSummary(){
   </div>
 </div>
 
-</body></html>`);
+</body>
+</html>`);
   w.document.close();setTimeout(()=>w.print(),500);
 }
 
@@ -5841,7 +4600,8 @@ function viewPhoto(id){const doc=D.docs.find(d=>d.id==id);if(!doc||!doc.photo)re
   </div>
 </div>
 
-</body></html>`);w.document.close();}
+</body>
+</html>`);w.document.close();}
 function deleteDoc(id){if(!confirm('Delete this document? This cannot be undone.'))return;D.docs=D.docs.filter(d=>d.id!==id);save();renderAll();}
 
 function renderMyMedsList(){
@@ -6812,7 +5572,8 @@ function printDailyReport(){
       <span>Tended Health — flougher.github.io/tended</span>
       <span>Generated ${new Date().toLocaleDateString()}</span>
     </div>
-  </body></html>`);
+  </body>
+</html>`);
   w.document.close();setTimeout(()=>w.print(),400);
 }
 
@@ -7868,7 +6629,8 @@ function printDoctorSummary(){
       <span>Tended Health</span>
       <span>Printed ${new Date().toLocaleString()}</span>
     </div>
-  </body></html>`);
+  </body>
+</html>`);
   w.document.close();
   setTimeout(()=>w.print(),400);
 }
@@ -8403,6 +7165,79 @@ function renderTrialBanner(){
   }
 }
 
+
+// ══════════════════════════════════════════════════════════════
+// PROFILE SETUP WIZARD — mirrors onboarding for new profiles
+// ══════════════════════════════════════════════════════════════
+let _psProfileId = null;
+
+function psShow(profileId, profileName){
+  _psProfileId = profileId;
+  psGoTo(0);
+  const ni = document.getElementById('ps-name');
+  if(ni) ni.value = profileName || '';
+  ['ps-med','ps-dose','ps-time','ps-doc'].forEach(id=>{const el=document.getElementById(id);if(el)el.value='';});
+  const di = document.getElementById('ps-dob'); if(di) di.value='';
+  const ov = document.getElementById('ps-overlay');
+  if(ov) ov.style.display='flex';
+}
+
+function psGoTo(n){
+  document.querySelectorAll('#ps-overlay .ob-step').forEach((s,i)=>s.classList.toggle('active',i===n));
+  document.querySelectorAll('#ps-overlay .ob-dot').forEach((d,i)=>d.classList.toggle('active',i===n));
+  const fill = document.getElementById('ps-fill');
+  if(fill) fill.style.width=((n+1)/4*100)+'%';
+}
+
+function psNext(step, fieldId){
+  if(fieldId){
+    const val = document.getElementById(fieldId)?.value?.trim();
+    if(val){
+      D.settings = {...D.settings, name: val};
+      const prof = profiles.find(p=>p.id===_psProfileId);
+      if(prof) prof.name = val;
+      saveProfiles(); save();
+      const ne = document.getElementById('topbar-profile-name'); if(ne) ne.textContent=val;
+      const bn = document.getElementById('profile-banner-name'); if(bn) bn.textContent=val;
+    }
+  }
+  psGoTo(step+1);
+}
+
+function psSaveMed(){
+  const name = document.getElementById('ps-med')?.value?.trim();
+  if(name){
+    D.meds.push({id:genId(),name,
+      dose:document.getElementById('ps-dose')?.value||'',
+      freq:'Once daily',
+      time:document.getElementById('ps-time')?.value||'',
+      refill:'',doctor:'',notes:''});
+    save();
+  }
+  psGoTo(2);
+}
+
+function psSaveDoctor(){
+  const doc = document.getElementById('ps-doc')?.value?.trim();
+  const dob = document.getElementById('ps-dob')?.value;
+  if(doc||dob){ D.settings={...D.settings,doc:doc||'',dob:dob||''}; save(); }
+  const name = D.settings.name || 'This profile';
+  const title = document.getElementById('ps-done-title');
+  const sub   = document.getElementById('ps-done-sub');
+  if(title) title.textContent = name + ' is ready!';
+  if(sub)   sub.textContent   = 'You are now viewing ' + name + "'s profile. Tap below to go to their dashboard.";
+  psGoTo(3);
+}
+
+function psFinish(){
+  const ov = document.getElementById('ps-overlay');
+  if(ov) ov.style.display='none';
+  _psProfileId = null;
+  renderAll(); loadSettings();
+  navTo('dashboard');
+  setTimeout(_showFirstActionGuide, 800);
+}
+
 function init(){
 
   let _bgTime = 0;
@@ -8466,14 +7301,7 @@ init();
 
 </script>
 
-<!-- MOBILE BOTTOM NAV -->
-<div class="bottom-nav" id="bottom-nav">
-  <div class="bn-wrap"><button class="bn-item active" id="bn-dashboard" onclick="navTo('dashboard',null,'bn-dashboard')"><span class="bn-ico">🏠</span><span class="bn-lbl">Home</span></button></div>
-  <div class="bn-wrap"><button class="bn-item" id="bn-medications" onclick="navTo('medications',null,'bn-medications')"><span class="bn-ico">💊</span><span class="bn-lbl">Meds</span><span class="bn-badge" id="bnb-meds" style="display:none"></span></button></div>
-  <div class="bn-wrap"><button class="bn-item" id="bn-appointments" onclick="navTo('appointments',null,'bn-appointments')"><span class="bn-ico">📅</span><span class="bn-lbl">Appts</span></button></div>
-  <div class="bn-wrap"><button class="bn-item" id="bn-health" onclick="navTo('health',null,'bn-health')"><span class="bn-ico">❤️</span><span class="bn-lbl">Health</span></button></div>
-  <div class="bn-wrap"><button class="bn-item" id="bn-more" onclick="toggleMobileMenu()"><span class="bn-ico">☰</span><span class="bn-lbl">More</span></button></div>
-</div>
+
 
 <!-- MOBILE MORE MENU -->
 <div id="mobile-menu" style="display:none;position:fixed;inset:0;z-index:3700;background:rgba(15,23,42,.5)" onclick="if(event.target===this)toggleMobileMenu()">
@@ -8501,5 +7329,4 @@ init();
 </div>
 
 </body>
-</html// ── HTML Sanitization ─────────────────────────────────────────
->
+</html>
