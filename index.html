@@ -834,7 +834,7 @@ body.high-contrast small,body.high-contrast .small-text{color:#333!important}
 </div>
 
 <!-- Profile switcher banner — shows when viewing another profile -->
-<div id="profile-switcher-banner" style="display:none;background:#7C3AED;color:white;padding:9px 16px;font-size:.82rem;font-weight:600;align-items:center;justify-content:space-between;gap:10px;flex-shrink:0">
+<div id="profile-switcher-banner" style="display:none;background:#7C3AED;color:white;padding:9px 16px;font-size:.82rem;font-weight:600;align-items:center;justify-content:space-between;gap:10px;flex-shrink:0;position:sticky;top:0;z-index:200">
   <span>👤 Viewing: <span id="profile-banner-name" style="font-weight:800"></span></span>
   <button onclick="switchProfile('default')" style="background:rgba(255,255,255,.25);border:1px solid rgba(255,255,255,.4);color:white;border-radius:8px;padding:4px 12px;font-size:.78rem;font-weight:700;cursor:pointer;font-family:inherit;white-space:nowrap">← My Profile</button>
 </div>
@@ -2332,10 +2332,10 @@ body.high-contrast small,body.high-contrast .small-text{color:#333!important}
     </div>
     <div class="ob-step" id="ps-s2">
       <div class="ob-icon">🩺</div>
-      <div class="ob-title">Doctor & date of birth</div>
+      <div class="ob-title">Doctor details</div>
       <div class="ob-sub">Used for the emergency card and appointment reminders.</div>
       <div class="form-group" style="text-align:left"><label>Primary doctor</label><input id="ps-doc" placeholder="e.g. Dr. Sarah Chen"></div>
-      <div class="form-group" style="text-align:left"><label>Date of birth</label><input type="date" id="ps-dob"></div>
+      <div class="form-group" style="text-align:left"><label>Doctor's phone number</label><input type="tel" id="ps-dob" placeholder="e.g. 555-867-5309"></div>
       <div style="display:flex;gap:10px;margin-top:6px">
         <button class="btn btn-secondary" style="flex:1;justify-content:center" onclick="psGoTo(3)">Skip</button>
         <button class="btn btn-primary" style="flex:2;justify-content:center" onclick="psSaveDoctor()">Save & Continue →</button>
@@ -7219,8 +7219,8 @@ function psSaveMed(){
 
 function psSaveDoctor(){
   const doc = document.getElementById('ps-doc')?.value?.trim();
-  const dob = document.getElementById('ps-dob')?.value;
-  if(doc||dob){ D.settings={...D.settings,doc:doc||'',dob:dob||''}; save(); }
+  const docPhone = document.getElementById('ps-dob')?.value?.trim();
+  if(doc||docPhone){ D.settings={...D.settings,doc:doc||'',docPhone:docPhone||''}; save(); }
   const name = D.settings.name || 'This profile';
   const title = document.getElementById('ps-done-title');
   const sub   = document.getElementById('ps-done-sub');
